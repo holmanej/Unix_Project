@@ -35,4 +35,22 @@ package unix_project is
 		);
 	end component;
 	
+	component SPRAM_MxN is
+		generic(
+			M		:	INTEGER := 8;	-- depth
+			N		:	INTEGER := 16	-- width
+		);
+		port(
+			clk		: in  STD_LOGIC;
+			reset	: in  STD_LOGIC := '0';
+			-- --
+			wrAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0) := (others => '0');
+			wrData	: in  STD_LOGIC_VECTOR (N-1 downto 0);
+			wren	: in  STD_LOGIC;
+			-- --
+			rdAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0);
+			rdData	: out STD_LOGIC_VECTOR (N-1 downto 0)
+		);
+	end component;
+	
 end unix_project;
