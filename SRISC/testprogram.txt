@@ -1,0 +1,50 @@
+-- loads
+00A - r0 = h'0A*
+10B - r1 = h'0B*
+2CC - r2 = h'CC*
+3DD - r3 = h'DD*
+402 - nop*
+-- alu
+410 - r0 = r0 + r1 exp: d'21; 0*
+4B0 - r0 = r2 + r3 exp: d'169; 1*
+481 - r0 = r2 - r0 exp: d'35; 0*
+441 - r0 = r1 - r0 exp: d'232; 1*
+4B2 - r0 = r2 and r3 exp: h'CC; 0*
+4B3 - r0 = r2 or r3 exp: h'DD; 0*
+4B4 - r0 = r2 xor r3 exp: h'11; 0*
+405 - r0 = ~r0 exp: h'EE; 0*
+001 - r0 = d'1*
+101 - r1 = d'1*
+416 - r0 = r0 sll r1; exp: d'2; 0*
+417 - r0 = r0 srl r1; exp: d'1; 0*
+408 - r0+1 exp: d'2; 0*
+0FF - r0 = d'255*
+408 - r0+1 exp: d'0; 1*
+409 - r0-1 exp: d'255; 1*
+409 - r0-1 exp: d'254; 0*
+40A - ind = r0 exp: a; 0*
+44B - r1 u< r0 exp: a; 1*
+41B - r0 u< r1 exp: a; 0*
+41C - r0 s< r1 exp: a; 1*
+44C - r1 s< r0 exp: a; 0*
+40D - r0 =? r0 exp: a; 1*
+44D - r0 =? r1 exp: a; 0*
+000 - r0 = 0*
+40E - r0 =? 0 exp: a; 1*
+44E - r1 =? 0 exp: a; 0*
+40F - set jump exp: a; 1*
+402 - nop*
+-- mem/io
+981 - mem[1] = r1 exp: h'01*
+801 - r0 = mem[1] exp: h'01*
+8FF - io[15] = r0 exp: h'01*
+B7F - r3 = io[15] exp: h'00*
+40A - ind = r0 (h'01)*
+105 - r1 = 5*
+980 - mem[ind(1)] = r1(5)*
+800 - r0 = mem[ind(1)](5)*
+-- branch/jump
+CFF - PC = 255 exp: no branch*
+40F - set jump*
+CFF - PC = 255 exp: branch*
+402 - nop*
