@@ -7,7 +7,7 @@ use work.srisc.all;
 entity IO_Module is
 	generic(
 		-- 0..7 inputs; 8..15 outputs
-		readonly	:	STD_LOGIC_VECTOR (15 downto 0) := x"00FF"
+		readonly	:	STD_LOGIC_VECTOR (0 to 15) := x"FF00"
 	);
 	port(
 		clk			: in  STD_LOGIC;
@@ -16,13 +16,13 @@ entity IO_Module is
 		cpu_wren	: in  STD_LOGIC;
 		cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
 		-- --
-		io_ports	: inout IO_ARRAY (0 to 15)
+		io_ports	: inout IO_ARRAY (0 to 15) := (others => (others => '0'))
 	);
 end IO_Module;
 	
 architecture Behavioral of IO_Module is
 
-	signal		io_regs		:	IO_ARRAY (0 to 15);
+	signal		io_regs		:	IO_ARRAY (0 to 15) := (others => (others => '0'));
 
 begin
 
@@ -33,15 +33,17 @@ begin
 				if (readonly(i) = '1') then
 					io_regs(i) <= io_ports(i);
 					io_ports(i) <= (others => 'Z');
-				elsif (cpu_wren = '1') then
-					io_regs(to_integer(unsigned(cpu_addr))) <= cpu_in;
 				else
 					io_ports(i) <= io_regs(i);
 				end if;
 			end loop;
 			
-			cpu_dout <= io_regs(to_integer(unsigned(cpu_addr)));
+			if (cpu_wren = '1' and readonly(to_integer(unsigned(cpu_addr))) = '0') then
+				io_regs(to_integer(unsigned(cpu_addr))) <= cpu_in;
+			end if;
 		end if;
-	end process;
+	end process;	
+	
+	cpu_dout <= io_regs(to_integer(unsigned(cpu_addr)));
 
 end Behavioral;

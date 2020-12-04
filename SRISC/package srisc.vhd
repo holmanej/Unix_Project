@@ -114,8 +114,8 @@ package srisc is
 			mem_addr_sel: out STD_LOGIC;
 			mem_wrEn	: out STD_LOGIC;
 			ind_wrEn	: out STD_LOGIC;
-			io_wrEn		: out STD_LOGIC,
-			exec_cmd	: out STD_LOGIC,
+			io_wrEn		: out STD_LOGIC;
+			exec_cmd	: out STD_LOGIC;
 			exit_cmd	: out STD_LOGIC
 		);
 	end component;
