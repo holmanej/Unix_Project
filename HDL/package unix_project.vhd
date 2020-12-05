@@ -6,20 +6,7 @@ use work.srisc.all;
 ----------------------------------------------------------------------------
 package unix_project is
 
-	-- MODULES --
-	component SRISC_CPU is
-		port(
-			clk			: in  STD_LOGIC;
-			reset		: in  STD_LOGIC;
-			guest_insn	: in  STD_LOGIC_VECTOR (11 downto 0);
-			guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
-			io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
-			io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
-			io_addr		: out STD_LOGIC_VECTOR (3 downto 0);
-			io_wrEn		: out STD_LOGIC
-		);
-	end component;
-	
+	-- MODULES --	
 	component IO_Module is
 		generic(
 			-- 0..7 inputs; 8..15 outputs
@@ -27,7 +14,7 @@ package unix_project is
 		);
 		port(
 			clk			: in  STD_LOGIC;
-			cpu_in		: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 			cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
 			cpu_wren	: in  STD_LOGIC;
 			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
@@ -65,6 +52,13 @@ package unix_project is
 			-- --
 			rdAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0);
 			rdData	: out STD_LOGIC_VECTOR (11 downto 0)
+		);
+	end component;
+	
+	-- ENTITY --
+	component Unix_Computer is
+		port(
+			clk			: in  STD_LOGIC
 		);
 	end component;
 	

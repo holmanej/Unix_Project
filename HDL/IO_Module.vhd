@@ -11,7 +11,7 @@ entity IO_Module is
 	);
 	port(
 		clk			: in  STD_LOGIC;
-		cpu_in		: in  STD_LOGIC_VECTOR (7 downto 0);
+		cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 		cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
 		cpu_wren	: in  STD_LOGIC;
 		cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
@@ -39,7 +39,7 @@ begin
 			end loop;
 			
 			if (cpu_wren = '1' and readonly(to_integer(unsigned(cpu_addr))) = '0') then
-				io_regs(to_integer(unsigned(cpu_addr))) <= cpu_in;
+				io_regs(to_integer(unsigned(cpu_addr))) <= cpu_din;
 			end if;
 		end if;
 	end process;	

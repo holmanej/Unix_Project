@@ -16,15 +16,15 @@ entity ProgramDecoder is
 		mem_addr_sel: out STD_LOGIC;
 		mem_wrEn	: out STD_LOGIC;
 		ind_wrEn	: out STD_LOGIC;
-		io_wrEn		: out STD_LOGIC,
-		exec_cmd	: out STD_LOGIC,
+		io_wrEn		: out STD_LOGIC;
+		exec_cmd	: out STD_LOGIC;
 		exit_cmd	: out STD_LOGIC
 	);
 end ProgramDecoder;
 	
 architecture Behavioral of ProgramDecoder is
 
-	constant	jmp_3ff	:	STD_LOGIC_VECTOR (others => '1');
+	constant	jmp_3ff	:	STD_LOGIC_VECTOR (11 downto 0) := (others => '1');
 
 	alias	opcode		is	inst_in(11 downto 10);
 	alias	rw_sel		is	inst_in(7);
@@ -34,7 +34,7 @@ architecture Behavioral of ProgramDecoder is
 
 begin
 
-	prog_sel	<= '1' when (opcode = "11" and cmp_in = '1') else '0';
+	prog_sel	<= '1' when (opcode = "11" and cmp_in = '1') or (inst_in = jmp_3ff and src_sel = '1') else '0';
 	cmp_wrEn	<= '1' when (opcode = "01") else '0';
 	data_sel	<= "11" when (opcode = "10" and addrHigh = "111") else opcode;
 	reg_addr_sel<= '1' when (opcode = "10") else '0';

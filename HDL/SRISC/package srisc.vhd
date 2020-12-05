@@ -193,13 +193,17 @@ package srisc is
 		);
 	end component;
 	
+	-- ENTITY --
 	component SRISC_CPU is
 		port(
 			clk			: in  STD_LOGIC;
-			io_din:		in  STD_LOGIC_VECTOR (7 downto 0);
-			io_dout:	out STD_LOGIC_VECTOR (7 downto 0);
-			io_addr:	out STD_LOGIC_VECTOR (3 downto 0);
-			io_we:		out STD_LOGIC
+			reset		: in  STD_LOGIC;
+			guest_insn	: in  STD_LOGIC_VECTOR (11 downto 0);
+			guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
+			io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
+			io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
+			io_addr		: out STD_LOGIC_VECTOR (3 downto 0);
+			io_wrEn		: out STD_LOGIC
 		);
 	end component;
 	

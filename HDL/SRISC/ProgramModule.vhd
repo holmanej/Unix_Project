@@ -28,8 +28,9 @@ architecture Behavioral of ProgramModule is
 	
 	constant const_one		:	STD_LOGIC_VECTOR (9 downto 0) := (0 => '1', others => '0');
 	
-	signal	inst_int		:	STD_LOGIC_VECTOR (11 downto 0);
-		alias	branchAddr	is	inst_int(9 downto 0);
+	signal	terminal_insn	:	STD_LOGIC_VECTOR (11 downto 0);
+	signal	insn_int		:	STD_LOGIC_VECTOR (11 downto 0);
+		alias	branchAddr	is	insn_int(9 downto 0);
 		
 	signal	rdAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
 	signal	wrAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
@@ -45,11 +46,11 @@ architecture Behavioral of ProgramModule is
 begin
 
 	Decoder: ProgramDecoder port map (
-		inst_in		=> inst_int,
+		inst_in		=> insn_int,
 		cmp_in		=> cmp_in,
 		src_sel		=> src_sel,
 		-- --
-		prog_sel	=> sel(1),
+		prog_sel	=> nextAddr_sel,
 		cmp_wrEn	=> cmp_wrEn,
 		data_sel	=> data_sel,
 		reg_addr_sel=> reg_addr_sel,
@@ -62,11 +63,11 @@ begin
 		exit_cmd	=> exit_cmd
 	);
 		
-	InsnMux: Mux_2to1_nbit generic map(10) port map (
+	InsnMux: Mux_2to1_nbit generic map(12) port map (
 		a_in	=> terminal_insn,
 		b_in	=> guest_insn,
 		sel		=> src_sel,
-		output	=> inst_int
+		output	=> insn_int
 	);
 	
 	GuestEnable: SR_Latch port map (
@@ -96,10 +97,10 @@ begin
 		output	=> pc_branch
 	);
 	
-	ReturnReg: Register_nbit (generic map(10)) port map (
+	ReturnReg: Register_nbit generic map(10) port map (
 		clk		=> clk,
 		rst		=> reset,
-		wrData	=> rdAddr,
+		wrData	=> pc_addone,
 		wrEn	=> exec_cmd,
 		rdData	=> returnAddr
 	);
@@ -118,6 +119,6 @@ begin
 	);
 	
 	guest_pc <= rdAddr;
-	inst_out <= inst_int(9 downto 0);
+	inst_out <= insn_int(9 downto 0);
 
 end Behavioral;
