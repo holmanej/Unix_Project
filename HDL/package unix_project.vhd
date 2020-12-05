@@ -55,6 +55,17 @@ package unix_project is
 		);
 	end component;
 	
+	component Guest_ProgramMemory is
+		port(
+			clk			: in  STD_LOGIC;
+			reset		: in  STD_LOGIC;
+			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_wren	: in  STD_LOGIC;
+			guest_pc	: in  STD_LOGIC_VECTOR (9 downto 0);
+			guest_insn	: out STD_LOGIC_VECTOR (11 downto 0)
+		);
+	end component;
+	
 	-- ENTITY --
 	component Unix_Computer is
 		port(

@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity MemoryController is
 	generic(
-		M			:	INTEGER := 9
+		M			:	INTEGER := 10
 	);
 	port(
 		clk			: in  STD_LOGIC;

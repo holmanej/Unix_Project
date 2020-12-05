@@ -21,15 +21,9 @@ end InsnRAM_12bit;
 	
 architecture Behavioral of InsnRAM_12bit is
 
-	--type		memArray	is	ARRAY (0 to 2**M-1) of STD_LOGIC_VECTOR (11 downto 0);
-	type		memArray	is	ARRAY (0 to 1023) of STD_LOGIC_VECTOR (11 downto 0);
+	type		memArray	is	ARRAY (0 to 2**M-1) of STD_LOGIC_VECTOR (11 downto 0);
 	
 	signal		mem_int		:	memArray := (
-		x"000",
-		x"000",
-		x"000",
-		x"000",
-		x"000",
 		others => (others => '1')
 	);
 	
