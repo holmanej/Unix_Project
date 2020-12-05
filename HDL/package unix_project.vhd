@@ -2,6 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
 library work;
+use work.srisc.all;
 ----------------------------------------------------------------------------
 package unix_project is
 
@@ -35,21 +36,35 @@ package unix_project is
 		);
 	end component;
 	
-	component SPRAM_MxN is
+	component MemoryController is
 		generic(
-			M		:	INTEGER := 8;	-- depth
-			N		:	INTEGER := 16	-- width
+			M			:	INTEGER := 8
+		);
+		port(
+			clk			: in  STD_LOGIC;
+			input		: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_wren	: in  STD_LOGIC;
+			-- --
+			addrOut		: out STD_LOGIC_VECTOR (M-1 downto 0);
+			dataOut		: out STD_LOGIC_VECTOR (7 downto 0);
+			wrenOut		: out STD_LOGIC
+		);
+	end component;
+	
+	component InsnRAM_12bit is
+		generic(
+			M		:	INTEGER := 10
 		);
 		port(
 			clk		: in  STD_LOGIC;
 			reset	: in  STD_LOGIC := '0';
 			-- --
-			wrAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0) := (others => '0');
-			wrData	: in  STD_LOGIC_VECTOR (N-1 downto 0);
+			wrAddr	: in  STD_LOGIC_VECTOR (M downto 0) := (others => '0');
+			wrData	: in  STD_LOGIC_VECTOR (7 downto 0);
 			wren	: in  STD_LOGIC;
 			-- --
 			rdAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0);
-			rdData	: out STD_LOGIC_VECTOR (N-1 downto 0)
+			rdData	: out STD_LOGIC_VECTOR (11 downto 0)
 		);
 	end component;
 	

@@ -4,13 +4,13 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity InsnRAM_12bit is
 	generic(
-		M		:	INTEGER := 11
+		M		:	INTEGER := 10
 	);
 	port(
 		clk		: in  STD_LOGIC;
 		reset	: in  STD_LOGIC := '0';
 		-- --
-		wrAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0) := (others => '0');
+		wrAddr	: in  STD_LOGIC_VECTOR (M downto 0) := (others => '0');
 		wrData	: in  STD_LOGIC_VECTOR (7 downto 0);
 		wren	: in  STD_LOGIC;
 		-- --
@@ -21,7 +21,7 @@ end InsnRAM_12bit;
 	
 architecture Behavioral of InsnRAM_12bit is
 
-	type		memArray	is	ARRAY (0 to 2**M-2) of STD_LOGIC_VECTOR (11 downto 0);
+	type		memArray	is	ARRAY (0 to 2**M-1) of STD_LOGIC_VECTOR (11 downto 0);
 	
 	signal		mem_int		:	memArray := (
 		others => (others => '0')
@@ -31,7 +31,7 @@ architecture Behavioral of InsnRAM_12bit is
 	
 begin
 
-	writeAddr <= to_integer(unsigned(wrAddr(M-1 downto 1)));
+	writeAddr <= to_integer(unsigned(wrAddr(M downto 1)));
 
 	process(clk)
 	begin

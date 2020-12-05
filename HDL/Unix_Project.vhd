@@ -24,17 +24,5 @@ begin
 		io_addr		=> open,
 		io_wrEn		=> open
 	);
-	
-	GuestRAM: SPRAM_MxN generic map (10, 12) port map (
-		clk			=> clk,
-		reset		=> reset,
-		-- --
-		wrAddr		=> "0000000000",
-		wrData		=> x"000",
-		wren		=> '0',
-		-- --
-		rdAddr		=> guest_pc,
-		rdData		=> guest_insn
-	);
 
 end Behavioral;

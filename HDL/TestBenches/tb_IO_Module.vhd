@@ -3,27 +3,12 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 library work;
 use work.srisc.all;
+use work.unix_project.all;
 
 entity tb_IO_Module is
 end tb_IO_Module;
 	
 architecture Behavioral of tb_IO_Module is
-
-	component IO_Module is
-		generic(
-			-- 0..7 inputs; 8..15 outputs
-			readonly	:	STD_LOGIC_VECTOR (0 to 15) := x"FF00"
-		);
-		port(
-			clk			: in  STD_LOGIC;
-			cpu_in		: in  STD_LOGIC_VECTOR (7 downto 0);
-			cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
-			cpu_wren	: in  STD_LOGIC;
-			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
-			-- --
-			io_ports	: inout IO_ARRAY (0 to 15)
-		);
-	end component;
 	
 	signal	clk			:	STD_LOGIC := '0';
 	signal	cpu_in		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
@@ -52,7 +37,7 @@ begin
 		clk <= not clk;
 	end process;
 	
-	uut: IO_Module port map(
+	uut: IO_Module generic map(x"FF00") port map(
 		clk			=> clk,
 		cpu_in		=> cpu_in,
 		cpu_addr	=> cpu_addr,
