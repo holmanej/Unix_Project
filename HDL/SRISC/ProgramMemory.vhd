@@ -14,7 +14,7 @@ end ProgramMemory;
 	
 architecture Behavioral of ProgramMemory is
 	
-	signal		inst_int	:	INST_TYPE := READ_HEX_FILE("C:\Users\holma\source\repos\Unix_Project\HDL\SRISC\program.hex");
+	signal		inst_int	:	INST_TYPE := READ_BIN_FILE("C:\Users\holma\source\repos\Unix_Project\S Code\guest_write_test.bin");
 	attribute	ramstyle	:	string;
 	attribute	ramstyle of inst_int	:	signal is "block";
 	

@@ -22,28 +22,23 @@ end IO_Module;
 	
 architecture Behavioral of IO_Module is
 
-	signal		io_regs		:	IO_ARRAY (0 to 15) := (others => (others => '0'));
-
 begin
 
 	process(clk)
 	begin
+		for i in 0 to 15 loop
+			if (readonly(i) = '1') then
+				io_ports(i) <= (others => 'Z');
+			end if;
+		end loop;
+		
 		if (rising_edge(clk)) then
-			for i in 0 to 15 loop
-				if (readonly(i) = '1') then
-					io_regs(i) <= io_ports(i);
-					io_ports(i) <= (others => 'Z');
-				else
-					io_ports(i) <= io_regs(i);
-				end if;
-			end loop;
-			
 			if (cpu_wren = '1' and readonly(to_integer(unsigned(cpu_addr))) = '0') then
-				io_regs(to_integer(unsigned(cpu_addr))) <= cpu_din;
+				io_ports(to_integer(unsigned(cpu_addr))) <= cpu_din;
 			end if;
 		end if;
 	end process;	
 	
-	cpu_dout <= io_regs(to_integer(unsigned(cpu_addr)));
+	cpu_dout <= io_ports(to_integer(unsigned(cpu_addr)));
 
 end Behavioral;

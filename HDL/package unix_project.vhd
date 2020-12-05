@@ -6,23 +6,7 @@ use work.srisc.all;
 ----------------------------------------------------------------------------
 package unix_project is
 
-	-- MODULES --	
-	component IO_Module is
-		generic(
-			-- 0..7 inputs; 8..15 outputs
-			readonly	:	STD_LOGIC_VECTOR (15 downto 0) := x"00FF"
-		);
-		port(
-			clk			: in  STD_LOGIC;
-			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
-			cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
-			cpu_wren	: in  STD_LOGIC;
-			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
-			-- --
-			io_ports	: inout IO_ARRAY (0 to 15)
-		);
-	end component;
-	
+	-- SUBMODULES --
 	component MemoryController is
 		generic(
 			M			:	INTEGER := 8
@@ -35,6 +19,24 @@ package unix_project is
 			addrOut		: out STD_LOGIC_VECTOR (M-1 downto 0);
 			dataOut		: out STD_LOGIC_VECTOR (7 downto 0);
 			wrenOut		: out STD_LOGIC
+		);
+	end component;
+	
+	component SPRAM_MxN is
+		generic(
+			M		:	INTEGER := 8;	-- depth
+			N		:	INTEGER := 16	-- width
+		);
+		port(
+			clk		: in  STD_LOGIC;
+			reset	: in  STD_LOGIC := '0';
+			-- --
+			wrAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0) := (others => '0');
+			wrData	: in  STD_LOGIC_VECTOR (N-1 downto 0);
+			wren	: in  STD_LOGIC;
+			-- --
+			rdAddr	: in  STD_LOGIC_VECTOR (M-1 downto 0);
+			rdData	: out STD_LOGIC_VECTOR (N-1 downto 0)
 		);
 	end component;
 	
@@ -55,6 +57,23 @@ package unix_project is
 		);
 	end component;
 	
+	-- Top Modules
+	component IO_Module is
+		generic(
+			-- 0..7 inputs; 8..15 outputs
+			readonly	:	STD_LOGIC_VECTOR (15 downto 0) := x"00FF"
+		);
+		port(
+			clk			: in  STD_LOGIC;
+			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
+			cpu_wren	: in  STD_LOGIC;
+			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
+			-- --
+			io_ports	: inout IO_ARRAY (0 to 15)
+		);
+	end component;
+	
 	component Guest_ProgramMemory is
 		port(
 			clk			: in  STD_LOGIC;
@@ -63,6 +82,16 @@ package unix_project is
 			cpu_wren	: in  STD_LOGIC;
 			guest_pc	: in  STD_LOGIC_VECTOR (9 downto 0);
 			guest_insn	: out STD_LOGIC_VECTOR (11 downto 0)
+		);
+	end component;
+	
+	component GP_RAM is
+		port(
+			clk			: in  STD_LOGIC;
+			reset		: in  STD_LOGIC;
+			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_wren	: in  STD_LOGIC;
+			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0)
 		);
 	end component;
 	

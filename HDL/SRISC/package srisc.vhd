@@ -208,14 +208,14 @@ package srisc is
 	end component;
 	
 	-- FUNCTIONS --
-	impure function READ_HEX_FILE(the_file_name: in string) return INST_TYPE;
+	impure function READ_BIN_FILE(the_file_name: in string) return INST_TYPE;
 	
 end srisc;
 
 package body srisc is
 
 	-- FUNCTIONS --	
-	impure function READ_HEX_FILE(the_file_name: in string) return INST_TYPE is		
+	impure function READ_BIN_FILE(the_file_name: in string) return INST_TYPE is		
 		file     in_file:    text open read_mode is the_file_name;
 		variable ram_data:   INST_TYPE;
 		variable input_line: line;
@@ -223,7 +223,7 @@ package body srisc is
 		for i in 0 to 1023 loop
 			if not endfile(in_file) then
 				readline(in_file, input_line);
-				hread(input_line, ram_data(i));
+				read(input_line, ram_data(i));
 			else
 				ram_data(i) := NOP;
 			end if;

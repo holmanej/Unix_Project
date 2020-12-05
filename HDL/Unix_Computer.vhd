@@ -13,13 +13,17 @@ end Unix_Computer;
 	
 architecture Behavioral of Unix_Computer is
 
-	-- CPU \ IO --
+	-- IO --
 	signal		io_wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		io_rdData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		io_rwAddr		:	STD_LOGIC_VECTOR (3 downto 0) := (others => '0');
 	signal		io_wren			:	STD_LOGIC := '0';
+	signal		io_ports		:	IO_ARRAY (0 to 15);
+		alias	ram_rdData		is	io_ports(0);
+		alias	gpm_wrData		is	io_ports(8);
+		alias	ram_wrData		is	io_ports(9);
 	
-	-- TEMP GPM --
+	-- GPM --
 	signal		guest_pc		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
 	signal		guest_insn		:	STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
 
@@ -41,19 +45,26 @@ begin
 		cpu_din		=> io_wrData,
 		cpu_addr	=> io_rwAddr,
 		cpu_wren	=> io_wren,
-		cpu_dout	=> io_rdData
+		cpu_dout	=> io_rdData,
+		-- --
+		io_ports	=> io_ports
 	);
 	
-	GPM: InsnRAM_12bit generic map(10) port map(
+	GPM: Guest_ProgramMemory port map(
 		clk			=> clk,
 		reset		=> '0',
-		-- --
-		wrAddr		=> "00000000000",
-		wrData		=> x"00",
-		wren		=> '0',
-		-- --
-		rdAddr		=> guest_pc,
-		rdData		=> guest_insn
+		cpu_din		=> gpm_wrData,
+		cpu_wren	=> io_wren,
+		guest_pc	=> guest_pc,
+		guest_insn	=> guest_insn
+	);
+	
+	RAM: GP_RAM port map(
+		clk			=> clk,
+		reset		=> '0',
+		cpu_din		=> ram_wrData,
+		cpu_wren	=> io_wren,
+		cpu_dout	=> ram_rdData
 	);
 
 end Behavioral;

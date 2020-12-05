@@ -23,6 +23,7 @@ architecture Behavioral of MemoryController is
 		command,
 		addrL,
 		addrH,
+		delay,
 		data
 	);
 	
@@ -53,19 +54,20 @@ begin
 					addr_int(M-1 downto 8) <= unsigned(input(M-9 downto 0));
 					state <= data;
 					
-				when data =>
+				when delay =>
+					wrenOut <= '0';
 					if (burst_len > 0) then
-						if (cpu_wren = '1') then
-							dataOut <= input;
-							wrenOut <= rw_sel;
-							addr_int <= addr_int + 1;
-							burst_len <= burst_len - 1;
-						else
-							wrenOut <= '0';
-						end if;
+						addr_int <= addr_int + 1;
+						burst_len <= burst_len - 1;
+						state <= data;
 					else
-						wrenOut <= '0';
 						state <= command;
+					end if;
+					
+				when data =>
+					if (cpu_wren = '1') then
+						wrenOut <= rw_sel;						
+						state <= delay;
 					end if;
 				
 				when others =>
@@ -77,5 +79,6 @@ begin
 	end process;
 	
 	addrOut <= std_logic_vector(addr_int);
+	dataOut <= input;
 
 end Behavioral;
