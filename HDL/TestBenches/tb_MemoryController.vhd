@@ -18,15 +18,25 @@ begin
 	process
 	begin
 		wait for 5 ns;
-		input <= x"05";
+		input <= x"84";
 		wait for 10 ns;
 		input <= x"01";
 		wait for 10 ns;
-		input <= x"02";
+		input <= x"01";
 		wait for 10 ns;
 		input <= x"55";
 		cpu_wren <= '1';
-		
+		wait for 10 ns;
+		input <= x"56";
+		wait for 10 ns;
+		input <= x"57";
+		cpu_wren <= '0';
+		wait for 10 ns;
+		cpu_wren <= '1';
+		wait for 10 ns;
+		input <= x"58";
+		wait for 10 ns;
+		input <= x"59";
 		wait;
 	end process;
 
@@ -36,7 +46,7 @@ begin
 		clk <= not clk;
 	end process;
 	
-	uut: MemoryController generic map(512) port map(
+	uut: MemoryController generic map(9) port map(
 		clk			=> clk,
 		input		=> input,
 		cpu_wren	=> cpu_wren,
