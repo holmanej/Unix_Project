@@ -13,7 +13,8 @@ entity SRISC_CPU is
 		io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 		io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 		io_addr		: out STD_LOGIC_VECTOR (3 downto 0);
-		io_wrEn		: out STD_LOGIC
+		io_wren		: out STD_LOGIC;
+		io_rden		: out STD_LOGIC
 	);
 end SRISC_CPU;
 	
@@ -33,13 +34,13 @@ architecture Behavioral of SRISC_CPU is
 	
 	signal	data_sel		:	STD_LOGIC_VECTOR (1 downto 0);
 	signal	cmp_int			:	STD_LOGIC;
-	signal	cmp_wrEn		:	STD_LOGIC;
-	signal	carry_wrEn		:	STD_LOGIC;
+	signal	cmp_wren		:	STD_LOGIC;
+	signal	carry_wren		:	STD_LOGIC;
 	signal	reg_addr_sel	:	STD_LOGIC;
-	signal	reg_wrEn		:	STD_LOGIC;
+	signal	reg_wren		:	STD_LOGIC;
 	signal	mem_addr_sel	:	STD_LOGIC;
-	signal	mem_wrEn		:	STD_LOGIC;
-	signal	ind_wrEn		:	STD_LOGIC;
+	signal	mem_wren		:	STD_LOGIC;
+	signal	ind_wren		:	STD_LOGIC;
 	
 begin
 
@@ -51,14 +52,15 @@ begin
 		-- --
 		guest_pc	=> guest_pc,
 		inst_out	=> inst_int,
-		cmp_wrEn	=> cmp_wrEn,
+		cmp_wren	=> cmp_wren,
 		data_sel	=> data_sel,
 		reg_addr_sel=> reg_addr_sel,
-		reg_wrEn	=> reg_wrEn,
+		reg_wren	=> reg_wren,
 		mem_addr_sel=> mem_addr_sel,
-		mem_wrEn	=> mem_wrEn,
-		ind_wrEn	=> ind_wrEn,
-		io_wrEn		=> io_wrEn
+		mem_wren	=> mem_wren,
+		ind_wren	=> ind_wren,
+		io_wren		=> io_wren,
+		io_rden		=> io_rden
 	);
 	
 	ALUMod: ALUModule port map (
@@ -67,7 +69,7 @@ begin
 		-- --
 		regData_a	=> regData_a,
 		regData_b	=> regData_b,
-		cmp_wrEn	=> cmp_wrEn,
+		cmp_wren	=> cmp_wren,
 		alu_out		=> alu_data,
 		cmp_out		=> cmp_int
 	);
@@ -80,7 +82,7 @@ begin
 		io_data		=> io_din,
 		data_sel	=> data_sel,
 		addr_sel	=> reg_addr_sel,
-		wrEn		=> reg_wrEn,
+		wren		=> reg_wren,
 		-- --
 		regData_a	=> regData_a,
 		regData_b	=> regData_b
@@ -90,7 +92,7 @@ begin
 		clk			=> clk,
 		rst			=> reset,
 		wrData		=> regData_a(6 downto 0),
-		wrEn		=> ind_wrEn,
+		wren		=> ind_wren,
 		rdData		=> ind_addr
 	);
 	
@@ -106,7 +108,7 @@ begin
 		clk			=> clk,
 		wrAddr		=> mem_addr,
 		wrData		=> regData_a,
-		wrEn		=> mem_wrEn,
+		wren		=> mem_wren,
 		rdAddr		=> mem_addr,
 		-- --
 		rdData		=> mem_data

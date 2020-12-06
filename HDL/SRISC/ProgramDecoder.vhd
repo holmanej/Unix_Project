@@ -9,14 +9,15 @@ entity ProgramDecoder is
 		src_sel		: in  STD_LOGIC;
 		-- --
 		prog_sel	: out STD_LOGIC;
-		cmp_wrEn	: out STD_LOGIC;
+		cmp_wren	: out STD_LOGIC;
 		data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
 		reg_addr_sel: out STD_LOGIC;
-		reg_wrEn	: out STD_LOGIC;
+		reg_wren	: out STD_LOGIC;
 		mem_addr_sel: out STD_LOGIC;
-		mem_wrEn	: out STD_LOGIC;
-		ind_wrEn	: out STD_LOGIC;
-		io_wrEn		: out STD_LOGIC;
+		mem_wren	: out STD_LOGIC;
+		ind_wren	: out STD_LOGIC;
+		io_wren		: out STD_LOGIC;
+		io_rden		: out STD_LOGIC;
 		exec_cmd	: out STD_LOGIC;
 		exit_cmd	: out STD_LOGIC
 	);
@@ -35,14 +36,15 @@ architecture Behavioral of ProgramDecoder is
 begin
 
 	prog_sel	<= '1' when (opcode = "11" and cmp_in = '1') or (inst_in = jmp_3ff and src_sel = '1') else '0';
-	cmp_wrEn	<= '1' when (opcode = "01") else '0';
+	cmp_wren	<= '1' when (opcode = "01") else '0';
 	data_sel	<= "11" when (opcode = "10" and addrHigh = "111") else opcode;
 	reg_addr_sel<= '1' when (opcode = "10") else '0';
-	reg_wrEn	<= '1' when (opcode = "00" or (opcode = "01" and unsigned(alu_op) <= 9) or (opcode = "10" and rw_sel = '0')) else '0';
+	reg_wren	<= '1' when (opcode = "00" or (opcode = "01" and unsigned(alu_op) <= 9) or (opcode = "10" and rw_sel = '0')) else '0';
 	mem_addr_sel<= '1' when (mem_addr = "0000000") else '0';
-	mem_wrEn	<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh /= "111") else '0';
-	ind_wrEn	<= '1' when (opcode = "01" and alu_op = x"A") else '0';
-	io_wrEn		<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh = "111") else '0';
+	mem_wren	<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh /= "111") else '0';
+	ind_wren	<= '1' when (opcode = "01" and alu_op = x"A") else '0';
+	io_wren		<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh = "111") else '0';
+	io_rden		<= '1' when (opcode = "10" and rw_sel = '0' and addrHigh = "111") else '0';
 	exec_cmd	<= '1' when (inst_in = jmp_3ff and src_sel = '0') else '0';
 	exit_cmd	<= '1' when (inst_in = jmp_3ff and src_sel = '1') else '0';
 

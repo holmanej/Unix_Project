@@ -59,18 +59,20 @@ package unix_project is
 	
 	-- Top Modules
 	component IO_Module is
-		generic(
-			-- 0..7 inputs; 8..15 outputs
-			readonly	:	STD_LOGIC_VECTOR (15 downto 0) := x"00FF"
-		);
 		port(
-			clk			: in  STD_LOGIC;
-			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
-			cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
-			cpu_wren	: in  STD_LOGIC;
-			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
+			clk				: in  STD_LOGIC;
+			cpu_din			: in  STD_LOGIC_VECTOR (7 downto 0);
+			cpu_addr		: in  STD_LOGIC_VECTOR (3 downto 0);
+			cpu_wren		: in  STD_LOGIC;
+			cpu_rden		: in  STD_LOGIC;
+			cpu_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 			-- --
-			io_ports	: inout IO_ARRAY (0 to 15)
+			input_sets		: in  STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+			output_resets	: in  STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+			input_flags		: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');			
+			output_flags	: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+			inputs			: in  IO_ARRAY (0 to 15) := (others => (others => '0'));
+			outputs			: out IO_ARRAY (0 to 15) := (others => (others => '0'))
 		);
 	end component;
 	
@@ -102,7 +104,8 @@ package unix_project is
 			-- --
 			switches	: in  STD_LOGIC_VECTOR (7 downto 0);
 			-- --
-			leds		: out STD_LOGIC_VECTOR (7 downto 0)
+			leds		: out STD_LOGIC_VECTOR (7 downto 0);
+			tx			: out STD_LOGIC
 		);
 	end component;
 	

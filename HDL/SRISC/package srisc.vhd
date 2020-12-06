@@ -60,7 +60,7 @@ package srisc is
 			clk		: in  STD_LOGIC;
 			rst		: in  STD_LOGIC;
 			wrData	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			wrEn	: in  STD_LOGIC;
+			wren	: in  STD_LOGIC;
 			rdData	: out STD_LOGIC_VECTOR (w-1 downto 0) := (others => '0')
 		);
 	end component;
@@ -82,7 +82,7 @@ package srisc is
 			clk		: in  STD_LOGIC;
 			wrAddr	: in  STD_LOGIC_VECTOR (1 downto 0);
 			wrData	: in  STD_LOGIC_VECTOR (7 downto 0);
-			wrEn	: in  STD_LOGIC;
+			wren	: in  STD_LOGIC;
 			rdAddr_a: in  STD_LOGIC_VECTOR (1 downto 0);
 			rdAddr_b: in  STD_LOGIC_VECTOR (1 downto 0);
 			-- --
@@ -107,14 +107,15 @@ package srisc is
 			src_sel		: in  STD_LOGIC;
 			-- --
 			prog_sel	: out STD_LOGIC;
-			cmp_wrEn	: out STD_LOGIC;
+			cmp_wren	: out STD_LOGIC;
 			data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
 			reg_addr_sel: out STD_LOGIC;
-			reg_wrEn	: out STD_LOGIC;
+			reg_wren	: out STD_LOGIC;
 			mem_addr_sel: out STD_LOGIC;
-			mem_wrEn	: out STD_LOGIC;
-			ind_wrEn	: out STD_LOGIC;
-			io_wrEn		: out STD_LOGIC;
+			mem_wren	: out STD_LOGIC;
+			ind_wren	: out STD_LOGIC;
+			io_wren		: out STD_LOGIC;
+			io_rden		: out STD_LOGIC;
 			exec_cmd	: out STD_LOGIC;
 			exit_cmd	: out STD_LOGIC
 		);
@@ -141,14 +142,15 @@ package srisc is
 			-- --
 			guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
 			inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
-			cmp_wrEn	: out STD_LOGIC;
+			cmp_wren	: out STD_LOGIC;
 			data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
 			reg_addr_sel: out STD_LOGIC;
-			reg_wrEn	: out STD_LOGIC;
+			reg_wren	: out STD_LOGIC;
 			mem_addr_sel: out STD_LOGIC;
-			mem_wrEn	: out STD_LOGIC;
-			ind_wrEn	: out STD_LOGIC;
-			io_wrEn		: out STD_LOGIC
+			mem_wren	: out STD_LOGIC;
+			ind_wren	: out STD_LOGIC;
+			io_wren		: out STD_LOGIC;
+			io_rden		: out STD_LOGIC
 		);
 	end component;
 	
@@ -158,7 +160,7 @@ package srisc is
 			alu_sel		: in  STD_LOGIC_VECTOR (3 downto 0);
 			regData_a	: in  STD_LOGIC_VECTOR (7 downto 0);
 			regData_b	: in  STD_LOGIC_VECTOR (7 downto 0);
-			cmp_wrEn	: in  STD_LOGIC;
+			cmp_wren	: in  STD_LOGIC;
 			-- --
 			alu_out		: out STD_LOGIC_VECTOR (7 downto 0);
 			cmp_out		: out STD_LOGIC
@@ -174,7 +176,7 @@ package srisc is
 			io_data		: in  STD_LOGIC_VECTOR (7 downto 0);
 			data_sel	: in  STD_LOGIC_VECTOR (1 downto 0);
 			addr_sel	: in  STD_LOGIC;
-			wrEn		: in  STD_LOGIC;
+			wren		: in  STD_LOGIC;
 			-- --
 			regData_a	: out STD_LOGIC_VECTOR (7 downto 0);
 			regData_b	: out STD_LOGIC_VECTOR (7 downto 0)
@@ -186,7 +188,7 @@ package srisc is
 			clk			: in  STD_LOGIC;
 			wrAddr		: in  STD_LOGIC_VECTOR (6 downto 0);
 			wrData		: in  STD_LOGIC_VECTOR (7 downto 0);
-			wrEn		: in  STD_LOGIC;
+			wren		: in  STD_LOGIC;
 			rdAddr		: in  STD_LOGIC_VECTOR (6 downto 0);
 			-- --
 			rdData		: out STD_LOGIC_VECTOR (7 downto 0)
@@ -203,7 +205,8 @@ package srisc is
 			io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 			io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 			io_addr		: out STD_LOGIC_VECTOR (3 downto 0);
-			io_wrEn		: out STD_LOGIC
+			io_wren		: out STD_LOGIC;
+			io_rden		: out STD_LOGIC
 		);
 	end component;
 	

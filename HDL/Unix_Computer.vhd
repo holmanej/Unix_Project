@@ -4,6 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 library work;
 use work.srisc.all;
 use work.unix_project.ALL;
+use work.uart.all;
 
 entity Unix_Computer is
 	port(
@@ -11,69 +12,79 @@ entity Unix_Computer is
 		-- --
 		switches	: in  STD_LOGIC_VECTOR (7 downto 0);
 		-- --
-		leds		: out STD_LOGIC_VECTOR (7 downto 0)
+		leds		: out STD_LOGIC_VECTOR (7 downto 0);
+		tx			: out STD_LOGIC
 	);
 end Unix_Computer;
 	
 architecture Behavioral of Unix_Computer is
 
-	-- IO --
+	-- IO --	
 	signal		io_wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		io_rdData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		io_rwAddr		:	STD_LOGIC_VECTOR (3 downto 0) := (others => '0');
 	signal		io_wren			:	STD_LOGIC := '0';
-	signal		io_ports		:	IO_ARRAY (0 to 15);
-		alias	sw_in			is	io_ports(1);
-		alias	led_out			is	io_ports(10);
-		alias	gpm_wrData		is	io_ports(8);
-		alias	ram_rdData		is	io_ports(0);
-		alias	ram_wrData		is	io_ports(9);
+	signal		io_rden			:	STD_LOGIC := '0';
 	
-	-- GPM --
-	signal		guest_pc		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	signal		guest_insn		:	STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
+	signal		iFlag_sets		:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+	signal		oFlag_resets	:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		alias	tx_clr			is	oFlag_resets(2);
+	signal		iFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+	signal		oFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		alias	tx_flag			is	oFlags(2);
+	signal		io_inputs		:	IO_ARRAY (0 to 15);
+		alias	sw_in			is	io_inputs(0);
+		alias	tx_status		is	io_inputs(2);
+	signal		io_outputs		:	IO_ARRAY (0 to 15);		
+		alias	led_out			is	io_outputs(0);
+		alias	tx_input		is	io_outputs(2);
+	
+	-- UART --
+	signal		tx_done			:	STD_LOGIC;
 
 begin
 
 	sw_in <= switches;
 	leds <= led_out;
+	
+	tx_status <= (0 => tx_done, others => '0');
 
 	CPU: SRISC_CPU port map (
 		clk			=> clk,
 		reset		=> '0',
-		guest_insn	=> guest_insn,
-		guest_pc	=> guest_pc,
+		guest_insn	=> x"000",
+		guest_pc	=> open,
 		io_din		=> io_rdData,
 		io_dout		=> io_wrData,
 		io_addr		=> io_rwAddr,
-		io_wrEn		=> io_wren
+		io_wren		=> io_wren,
+		io_rden		=> io_rden
 	);
 	
-	IO: IO_Module generic map(x"FF00") port map(
-		clk			=> clk,
-		cpu_din		=> io_wrData,
-		cpu_addr	=> io_rwAddr,
-		cpu_wren	=> io_wren,
-		cpu_dout	=> io_rdData,
+	IO: IO_Module port map(
+		clk				=> clk,
+		cpu_din			=> io_wrData,
+		cpu_addr		=> io_rwAddr,
+		cpu_wren		=> io_wren,
+		cpu_rden		=> io_rden,
+		cpu_dout		=> io_rdData,
 		-- --
-		io_ports	=> io_ports
+		input_sets		=> iFlag_sets,
+		output_resets	=> oFlag_resets,
+		input_flags		=> iFlags,
+		output_flags	=> oFlags,
+		inputs			=> io_inputs,
+		outputs			=> io_outputs
 	);
 	
-	GPM: Guest_ProgramMemory port map(
+	uartTX: UART_TX port map(
 		clk			=> clk,
-		reset		=> '0',
-		cpu_din		=> gpm_wrData,
-		cpu_wren	=> io_wren,
-		guest_pc	=> guest_pc,
-		guest_insn	=> guest_insn
-	);
-	
-	RAM: GP_RAM port map(
-		clk			=> clk,
-		reset		=> '0',
-		cpu_din		=> ram_wrData,
-		cpu_wren	=> io_wren,
-		cpu_dout	=> ram_rdData
+		input		=> tx_input,
+		rdFlag		=> tx_flag,
+		-- --
+		clrFlag		=> tx_clr,
+		doneBit		=> tx_done,
+		TX			=> tx
 	);
 
 end Behavioral;

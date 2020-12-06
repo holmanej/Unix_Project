@@ -13,14 +13,15 @@ entity ProgramModule is
 		-- --
 		guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
 		inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
-		cmp_wrEn	: out STD_LOGIC;
+		cmp_wren	: out STD_LOGIC;
 		data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
 		reg_addr_sel: out STD_LOGIC;
-		reg_wrEn	: out STD_LOGIC;
+		reg_wren	: out STD_LOGIC;
 		mem_addr_sel: out STD_LOGIC;
-		mem_wrEn	: out STD_LOGIC;
-		ind_wrEn	: out STD_LOGIC;
-		io_wrEn		: out STD_LOGIC
+		mem_wren	: out STD_LOGIC;
+		ind_wren	: out STD_LOGIC;
+		io_wren		: out STD_LOGIC;
+		io_rden		: out STD_LOGIC
 	);
 end ProgramModule;
 	
@@ -51,14 +52,15 @@ begin
 		src_sel		=> src_sel,
 		-- --
 		prog_sel	=> nextAddr_sel,
-		cmp_wrEn	=> cmp_wrEn,
+		cmp_wren	=> cmp_wren,
 		data_sel	=> data_sel,
 		reg_addr_sel=> reg_addr_sel,
-		reg_wrEn	=> reg_wrEn,
+		reg_wren	=> reg_wren,
 		mem_addr_sel=> mem_addr_sel,
-		mem_wrEn	=> mem_wrEn,
-		ind_wrEn	=> ind_wrEn,
-		io_wrEn		=> io_wrEn,
+		mem_wren	=> mem_wren,
+		ind_wren	=> ind_wren,
+		io_wren		=> io_wren,
+		io_rden		=> io_rden,
 		exec_cmd	=> exec_cmd,
 		exit_cmd	=> exit_cmd
 	);
@@ -86,7 +88,7 @@ begin
 		clk		=> clk,
 		rst		=> exec_cmd,
 		wrData	=> wrAddr,
-		wrEn	=> '1',
+		wren	=> '1',
 		rdData	=> rdAddr
 	);
 	
@@ -101,7 +103,7 @@ begin
 		clk		=> clk,
 		rst		=> reset,
 		wrData	=> pc_addone,
-		wrEn	=> exec_cmd,
+		wren	=> exec_cmd,
 		rdData	=> returnAddr
 	);
 	

@@ -5,18 +5,20 @@ library work;
 use work.srisc.all;
 
 entity IO_Module is
-	generic(
-		-- 0..7 inputs; 8..15 outputs
-		readonly	:	STD_LOGIC_VECTOR (0 to 15) := x"FF00"
-	);
 	port(
-		clk			: in  STD_LOGIC;
-		cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
-		cpu_addr	: in  STD_LOGIC_VECTOR (3 downto 0);
-		cpu_wren	: in  STD_LOGIC;
-		cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
+		clk				: in  STD_LOGIC;
+		cpu_din			: in  STD_LOGIC_VECTOR (7 downto 0);
+		cpu_addr		: in  STD_LOGIC_VECTOR (3 downto 0);
+		cpu_wren		: in  STD_LOGIC;
+		cpu_rden		: in  STD_LOGIC;
+		cpu_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 		-- --
-		io_ports	: inout IO_ARRAY (0 to 15) := (others => (others => '0'))
+		input_sets		: in  STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		output_resets	: in  STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		input_flags		: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		output_flags	: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		inputs			: in  IO_ARRAY (0 to 15) := (others => (others => '0'));
+		outputs			: out IO_ARRAY (0 to 15) := (others => (others => '0'))
 	);
 end IO_Module;
 	
@@ -25,20 +27,34 @@ architecture Behavioral of IO_Module is
 begin
 
 	process(clk)
-	begin
-		for i in 0 to 15 loop
-			if (readonly(i) = '1') then
-				io_ports(i) <= (others => 'Z');
-			end if;
-		end loop;
-		
+	begin		
 		if (rising_edge(clk)) then
-			if (cpu_wren = '1' and readonly(to_integer(unsigned(cpu_addr))) = '0') then
-				io_ports(to_integer(unsigned(cpu_addr))) <= cpu_din;
+			-- cpu writes to output and sets flag
+			if (cpu_wren = '1') then
+				outputs(to_integer(unsigned(cpu_addr))) <= cpu_din;
+				output_flags(to_integer(unsigned(cpu_addr))) <= '1';
+			-- device reads output and resets flag
+			else
+				for i in 0 to 15 loop
+					if (output_resets(i) = '1') then
+						output_flags(i) <= '0';
+					end if;
+				end loop;
+			end if;
+			
+			-- device writes input and sets flag
+			for i in 0 to 15 loop
+				if (input_sets(i) = '1') then
+					input_flags(i) <= '1';
+				end if;
+			end loop;
+			-- cpu reads input and resets flag
+			if (cpu_rden = '1') then
+				input_flags(to_integer(unsigned(cpu_addr))) <= '0';
 			end if;
 		end if;
 	end process;	
 	
-	cpu_dout <= io_ports(to_integer(unsigned(cpu_addr)));
+	cpu_dout <= inputs(to_integer(unsigned(cpu_addr)));
 
 end Behavioral;
