@@ -10,12 +10,16 @@ end tb_Unix_Project;
 architecture Behavioral of tb_Unix_Project is
 	
 	signal	clk			:	STD_LOGIC := '0';
+	signal	switches	:	STD_LOGIC_VECTOR (7 downto 0) := x"55";
 
 begin
 
 	process
 	begin
 		wait for 5 ns;
+		switches <= x"55";
+		wait for 10 ns;
+		switches <= x"69";
 		
 		wait;
 	end process;
@@ -27,7 +31,9 @@ begin
 	end process;
 	
 	uut: Unix_Computer port map(
-		clk		=> clk
+		clk			=> clk,
+		switches	=> switches,
+		leds		=> open
 	);
 
 end Behavioral;

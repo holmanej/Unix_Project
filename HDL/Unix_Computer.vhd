@@ -7,7 +7,11 @@ use work.unix_project.ALL;
 
 entity Unix_Computer is
 	port(
-		clk			: in  STD_LOGIC
+		clk			: in  STD_LOGIC;
+		-- --
+		switches	: in  STD_LOGIC_VECTOR (7 downto 0);
+		-- --
+		leds		: out STD_LOGIC_VECTOR (7 downto 0)
 	);
 end Unix_Computer;
 	
@@ -19,8 +23,10 @@ architecture Behavioral of Unix_Computer is
 	signal		io_rwAddr		:	STD_LOGIC_VECTOR (3 downto 0) := (others => '0');
 	signal		io_wren			:	STD_LOGIC := '0';
 	signal		io_ports		:	IO_ARRAY (0 to 15);
-		alias	ram_rdData		is	io_ports(0);
+		alias	sw_in			is	io_ports(1);
+		alias	led_out			is	io_ports(10);
 		alias	gpm_wrData		is	io_ports(8);
+		alias	ram_rdData		is	io_ports(0);
 		alias	ram_wrData		is	io_ports(9);
 	
 	-- GPM --
@@ -28,6 +34,9 @@ architecture Behavioral of Unix_Computer is
 	signal		guest_insn		:	STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
 
 begin
+
+	sw_in <= switches;
+	leds <= led_out;
 
 	CPU: SRISC_CPU port map (
 		clk			=> clk,

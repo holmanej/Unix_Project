@@ -98,7 +98,11 @@ package unix_project is
 	-- ENTITY --
 	component Unix_Computer is
 		port(
-			clk			: in  STD_LOGIC
+			clk			: in  STD_LOGIC;
+			-- --
+			switches	: in  STD_LOGIC_VECTOR (7 downto 0);
+			-- --
+			leds		: out STD_LOGIC_VECTOR (7 downto 0)
 		);
 	end component;
 	
