@@ -24,7 +24,7 @@ package uart is
 			RX			: in  STD_LOGIC;
 			-- --
 			output		: out STD_LOGIC_VECTOR (7 downto 0);
-			doneBit		: out STD_LOGIC
+			wrFlag		: out STD_LOGIC
 		);
 	end component;
 	

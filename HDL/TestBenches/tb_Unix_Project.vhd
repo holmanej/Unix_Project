@@ -8,18 +8,25 @@ entity tb_Unix_Project is
 end tb_Unix_Project;
 	
 architecture Behavioral of tb_Unix_Project is
+
+	constant	sixnine	:	STD_LOGIC_VECTOR (7 downto 0) := x"69";
 	
 	signal	clk			:	STD_LOGIC := '0';
 	signal	switches	:	STD_LOGIC_VECTOR (7 downto 0) := x"55";
+	signal	rx			:	STD_LOGIC := '1';
 
 begin
 
 	process
 	begin
 		wait for 5 ns;
-		switches <= x"55";
-		wait for 10 ns;
-		switches <= x"69";
+		rx <= '0';
+		wait for 1 us;
+		for i in 0 to 7 loop
+			rx <= sixnine(i);
+			wait for 1 us;
+		end loop;
+		rx <= '1';
 		
 		wait;
 	end process;
@@ -33,7 +40,9 @@ begin
 	uut: Unix_Computer port map(
 		clk			=> clk,
 		switches	=> switches,
-		leds		=> open
+		rx			=> rx,
+		leds		=> open,
+		tx			=> open
 	);
 
 end Behavioral;

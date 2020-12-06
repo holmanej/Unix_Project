@@ -103,6 +103,7 @@ package unix_project is
 			clk			: in  STD_LOGIC;
 			-- --
 			switches	: in  STD_LOGIC_VECTOR (7 downto 0);
+			rx			: in  STD_LOGIC;
 			-- --
 			leds		: out STD_LOGIC_VECTOR (7 downto 0);
 			tx			: out STD_LOGIC

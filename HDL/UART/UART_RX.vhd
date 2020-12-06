@@ -8,7 +8,7 @@ entity UART_RX is
 		RX			: in  STD_LOGIC;
 		-- --
 		output		: out STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
-		doneBit		: out STD_LOGIC
+		wrFlag		: out STD_LOGIC
 	);
 end UART_RX;
 	
@@ -17,7 +17,8 @@ architecture Behavioral of UART_RX is
 	type stateType is (
 		idle,
 		start,
-		readRX
+		readRX,
+		stop
 	);
 	
 	signal		state	:	stateType := idle;
@@ -34,13 +35,11 @@ begin
 			
 			case state is
 				when idle =>
+					wrFlag <= '0';
 					if (RX = '0') then
 						timer <= (others => '0');
-						index <= (others => '0');
-						doneBit <= '0';
+						index <= (others => '0');						
 						state <= start;
-					else
-						doneBit <= '1';
 					end if;
 					
 				when start =>
@@ -57,8 +56,16 @@ begin
 							index <= index + 1;
 						end if;
 					else
+						timer <= (others => '0');
+						state <= stop;
+					end if;
+					
+				when stop =>
+					if (timer = 100) then
+						wrFlag <= '1';
 						state <= idle;
 					end if;
+					
 			end case;
 		end if;
 	end process;						

@@ -41,7 +41,7 @@ begin
 		RX			=> rx,
 		-- --
 		output		=> open,
-		doneBit		=> open
+		wrFlag		=> open
 	);
 
 end Behavioral;

@@ -28,9 +28,11 @@ architecture Behavioral of Unix_Computer is
 	signal		io_rden			:	STD_LOGIC := '0';
 	
 	signal		iFlag_sets		:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		alias	rxFlag_set		is	iFlag_sets(1);
 	signal		oFlag_resets	:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_clr			is	oFlag_resets(2);
 	signal		iFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
+		alias	rx_done			is	iFlags(1);
 	signal		oFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_flag			is	oFlags(2);
 	signal		io_inputs		:	IO_ARRAY (0 to 15);
@@ -43,7 +45,6 @@ architecture Behavioral of Unix_Computer is
 	
 	-- UART --
 	signal		tx_done			:	STD_LOGIC;
-	signal		rx_done			:	STD_LOGIC;
 
 begin
 
@@ -95,7 +96,7 @@ begin
 		RX			=> rx,
 		-- --
 		output		=> rx_output,
-		doneBit		=> rx_done
+		wrFlag		=> rxFlag_set
 	);
 
 end Behavioral;
