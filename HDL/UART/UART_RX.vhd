@@ -23,7 +23,7 @@ architecture Behavioral of UART_RX is
 	
 	signal		state	:	stateType := idle;
 	
-	signal		timer	:	UNSIGNED (7 downto 0) := (others => '0');
+	signal		timer	:	UNSIGNED (9 downto 0) := (others => '0');
 	signal		index	:	UNSIGNED (3 downto 0) := (others => '0');
 
 begin
@@ -43,14 +43,14 @@ begin
 					end if;
 					
 				when start =>
-					if (timer = 50) then
+					if (timer = 500) then
 						timer <= (others => '0');
 						state <= readRX;
 					end if;
 				
 				when readRX =>
 					if (index < 8) then
-						if (timer = 100) then
+						if (timer = 1000) then
 							timer <= (others => '0');
 							output(to_integer(index)) <= RX;
 							index <= index + 1;
@@ -61,7 +61,7 @@ begin
 					end if;
 					
 				when stop =>
-					if (timer = 100) then
+					if (timer = 1000) then
 						wrFlag <= '1';
 						state <= idle;
 					end if;

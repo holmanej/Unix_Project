@@ -25,7 +25,7 @@ architecture Behavioral of UART_TX is
 	
 	signal		state	:	stateType := idle;
 	
-	signal		timer	:	UNSIGNED (6 downto 0) := (others => '0');
+	signal		timer	:	UNSIGNED (9 downto 0) := (others => '0');
 	signal		elapsed	:	STD_LOGIC := '0';
 	
 	signal		index	:	UNSIGNED (3 downto 0) := (others => '0');
@@ -36,7 +36,7 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if (timer < 100) then
+			if (timer < 1000) then
 				timer <= timer + 1;
 				elapsed <= '0';
 			else
