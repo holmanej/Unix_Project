@@ -11,6 +11,7 @@ entity Unix_Computer is
 		clk			: in  STD_LOGIC;
 		-- --
 		switches	: in  STD_LOGIC_VECTOR (7 downto 0);
+		rx			: in  STD_LOGIC;
 		-- --
 		leds		: out STD_LOGIC_VECTOR (7 downto 0);
 		tx			: out STD_LOGIC
@@ -34,20 +35,22 @@ architecture Behavioral of Unix_Computer is
 		alias	tx_flag			is	oFlags(2);
 	signal		io_inputs		:	IO_ARRAY (0 to 15);
 		alias	sw_in			is	io_inputs(0);
-		alias	tx_status		is	io_inputs(2);
+		alias	rx_output		is	io_inputs(1);
+		alias	uart_status		is	io_inputs(2);
 	signal		io_outputs		:	IO_ARRAY (0 to 15);		
 		alias	led_out			is	io_outputs(0);
 		alias	tx_input		is	io_outputs(2);
 	
 	-- UART --
 	signal		tx_done			:	STD_LOGIC;
+	signal		rx_done			:	STD_LOGIC;
 
 begin
 
 	sw_in <= switches;
 	leds <= led_out;
 	
-	tx_status <= (0 => tx_done, others => '0');
+	uart_status <= (2 => tx_done, 1 => rx_done, others => '0');
 
 	CPU: SRISC_CPU port map (
 		clk			=> clk,
@@ -85,6 +88,14 @@ begin
 		clrFlag		=> tx_clr,
 		doneBit		=> tx_done,
 		TX			=> tx
+	);
+	
+	uartRX: UART_RX port map(
+		clk			=> clk,
+		RX			=> rx,
+		-- --
+		output		=> rx_output,
+		doneBit		=> rx_done
 	);
 
 end Behavioral;

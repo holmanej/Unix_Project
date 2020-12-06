@@ -30,7 +30,10 @@ begin
 	uut: UART_TX port map(
 		clk			=> clk,
 		input		=> input,
+		rdFlag		=> '0',
 		-- --
+		clrFlag		=> open,
+		doneBit		=> open,
 		TX			=> open
 	);
 

@@ -18,4 +18,14 @@ package uart is
 		);
 	end component;
 	
+	component UART_RX is
+		port(
+			clk			: in  STD_LOGIC;
+			RX			: in  STD_LOGIC;
+			-- --
+			output		: out STD_LOGIC_VECTOR (7 downto 0);
+			doneBit		: out STD_LOGIC
+		);
+	end component;
+	
 end uart;
