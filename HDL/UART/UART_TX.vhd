@@ -39,7 +39,9 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if (timer < baud_delay) then
+			if (state = idle) then
+				timer <= (others => '0');
+			elsif (timer < baud_delay) then
 				timer <= timer + 1;
 				elapsed <= '0';
 			else

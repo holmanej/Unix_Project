@@ -81,7 +81,7 @@ begin
 		outputs			=> io_outputs
 	);
 	
-	uartTX: UART_TX generic map(100) port map(
+	uartTX: UART_TX generic map(1000) port map(
 		clk			=> clk,
 		input		=> tx_input,
 		rdFlag		=> tx_flag,
@@ -91,7 +91,7 @@ begin
 		TX			=> tx
 	);
 	
-	uartRX: UART_RX generic map(100) port map(
+	uartRX: UART_RX generic map(1000) port map(
 		clk			=> clk,
 		RX			=> rx,
 		-- --

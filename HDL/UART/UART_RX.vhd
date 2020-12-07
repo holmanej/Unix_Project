@@ -35,7 +35,9 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if (state = start and timer = baud_delay / 2) then
+			if (state = idle) then
+				timer <= (others => '0');
+			elsif (state = start and timer = baud_delay / 2) then
 				elapsed <= '1';
 				timer <= (others => '0');
 			elsif (timer = baud_delay) then
