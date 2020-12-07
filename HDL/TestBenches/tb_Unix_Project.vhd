@@ -23,18 +23,18 @@ begin
 	begin
 		wait for 5 ns;
 		rx <= '0';
-		wait for 10 us;
+		wait for 1 us;
 		for i in 0 to 7 loop
 			rx <= sixnine(i);
-			wait for 10 us;
+			wait for 1 us;
 		end loop;
 		rx <= '1';
-		wait for 10 us;
+		wait for 1 us;
 		rx <= '0';
-		wait for 10 us;
+		wait for 1 us;
 		for i in 0 to 7 loop
 			rx <= zero(i);
-			wait for 10 us;
+			wait for 1 us;
 		end loop;
 		rx <= '1';
 		

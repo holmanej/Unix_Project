@@ -14,11 +14,14 @@ package unix_project is
 		port(
 			clk			: in  STD_LOGIC;
 			input		: in  STD_LOGIC_VECTOR (7 downto 0);
+			wrFlag		: in  STD_LOGIC;
 			cpu_wren	: in  STD_LOGIC;
+			cpu_rden	: in  STD_LOGIC;
 			-- --
 			addrOut		: out STD_LOGIC_VECTOR (M-1 downto 0);
 			dataOut		: out STD_LOGIC_VECTOR (7 downto 0);
-			wrenOut		: out STD_LOGIC
+			wrenOut		: out STD_LOGIC := '0';
+			clrFlag		: out STD_LOGIC := '0'
 		);
 	end component;
 	
@@ -93,7 +96,10 @@ package unix_project is
 			reset		: in  STD_LOGIC;
 			cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 			cpu_wren	: in  STD_LOGIC;
-			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0)
+			cpu_rden	: in  STD_LOGIC;
+			cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
+			wrFlag		: in  STD_LOGIC;
+			clrFlag		: out STD_LOGIC
 		);
 	end component;
 	

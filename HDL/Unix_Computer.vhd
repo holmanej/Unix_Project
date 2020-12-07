@@ -31,17 +31,21 @@ architecture Behavioral of Unix_Computer is
 		alias	rxFlag_set		is	iFlag_sets(1);
 	signal		oFlag_resets	:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_clr			is	oFlag_resets(2);
+		alias	ram_clr			is	oFlag_resets(3);
 	signal		iFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	rx_done			is	iFlags(1);
 	signal		oFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_flag			is	oFlags(2);
+		alias	ram_flag		is	oFlags(3);
 	signal		io_inputs		:	IO_ARRAY (0 to 15);
 		alias	sw_in			is	io_inputs(0);
 		alias	rx_output		is	io_inputs(1);
 		alias	uart_status		is	io_inputs(2);
-	signal		io_outputs		:	IO_ARRAY (0 to 15);		
-		alias	led_out			is	io_outputs(0);
+		alias	ram_output		is	io_inputs(3);
+	signal		io_outputs		:	IO_ARRAY (0 to 15);
+		alias	led_out			is	io_outputs(0);		
 		alias	tx_input		is	io_outputs(2);
+		alias	ram_input		is	io_outputs(3);
 	
 	-- UART --
 	signal		tx_done			:	STD_LOGIC;
@@ -79,6 +83,17 @@ begin
 		output_flags	=> oFlags,
 		inputs			=> io_inputs,
 		outputs			=> io_outputs
+	);
+	
+	RAM: GP_RAM port map(
+		clk			=> clk,
+		reset		=> '0',
+		cpu_din		=> ram_input,
+		cpu_wren	=> io_wren,
+		cpu_rden	=> io_rden,
+		cpu_dout	=> ram_output,
+		wrFlag		=> ram_flag,
+		clrFlag		=> ram_clr
 	);
 	
 	uartTX: UART_TX generic map(100) port map(

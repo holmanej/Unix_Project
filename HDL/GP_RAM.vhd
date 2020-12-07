@@ -10,7 +10,10 @@ entity GP_RAM is
 		reset		: in  STD_LOGIC;
 		cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 		cpu_wren	: in  STD_LOGIC;
-		cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0)
+		cpu_rden	: in  STD_LOGIC;
+		cpu_dout	: out STD_LOGIC_VECTOR (7 downto 0);
+		wrFlag		: in  STD_LOGIC;
+		clrFlag		: out STD_LOGIC
 	);
 end GP_RAM;
 	
@@ -26,10 +29,13 @@ begin
 		clk			=> clk,
 		input		=> cpu_din,
 		cpu_wren	=> cpu_wren,
+		cpu_rden	=> cpu_rden,
+		wrFlag		=> wrFlag,
 		-- --
 		addrOut		=> rwAddr,
 		dataOut		=> wrData,
-		wrenOut		=> wren
+		wrenOut		=> wren,
+		clrFlag		=> clrFlag
 	);
 	
 	Memory: SPRAM_MxN generic map(10, 8) port map(

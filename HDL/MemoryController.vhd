@@ -9,11 +9,14 @@ entity MemoryController is
 	port(
 		clk			: in  STD_LOGIC;
 		input		: in  STD_LOGIC_VECTOR (7 downto 0);
+		wrFlag		: in  STD_LOGIC;
 		cpu_wren	: in  STD_LOGIC;
+		cpu_rden	: in  STD_LOGIC;
 		-- --
 		addrOut		: out STD_LOGIC_VECTOR (M-1 downto 0) := (others => '0');
 		dataOut		: out STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
-		wrenOut		: out STD_LOGIC := '0'
+		wrenOut		: out STD_LOGIC := '0';
+		clrFlag		: out STD_LOGIC := '0'
 	);
 end MemoryController;
 	
@@ -23,8 +26,9 @@ architecture Behavioral of MemoryController is
 		command,
 		addrL,
 		addrH,
-		delay,
-		data
+		data,
+		inc,
+		stop
 	);
 	
 	signal		state		:	stateType := command;
@@ -40,7 +44,7 @@ begin
 		if (rising_edge(clk)) then
 			case state is
 				when command =>
-					if (input(6 downto 0) /= "0000000") then
+					if (wrFlag = '1') then
 						rw_sel <= input(7);
 						burst_len <= unsigned(input(6 downto 0));
 						state <= addrL;
@@ -54,25 +58,31 @@ begin
 					addr_int(M-1 downto 8) <= unsigned(input(M-9 downto 0));
 					state <= data;
 					
-				when delay =>
-					wrenOut <= '0';
-					if (burst_len > 0) then
-						addr_int <= addr_int + 1;
-						burst_len <= burst_len - 1;
-						state <= data;
-					else
-						state <= command;
+				when data =>					
+					if (cpu_wren = '1' or cpu_rden = '1') then
+						wrenOut <= rw_sel;						
+						if (burst_len > 1) then
+							state <= inc;
+						else
+							clrFlag <= '1';
+							state <= stop;
+						end if;
 					end if;
 					
-				when data =>
-					if (cpu_wren = '1') then
-						wrenOut <= rw_sel;						
-						state <= delay;
-					end if;
+				when inc =>
+					wrenOut <= '0';					
+					addr_int <= addr_int + 1;
+					burst_len <= burst_len - 1;
+					state <= data;
+					
+				when stop =>
+					wrenOut <= '0';	
+					clrFlag <= '0';
+					state <= command;
 				
 				when others =>
 					wrenOut <= '0';
-					state <= command;
+					state <= stop;
 					
 			end case;
 		end if;
