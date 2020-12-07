@@ -7,6 +7,9 @@ package uart is
 
 	-- MODULES --
 	component UART_TX is
+		generic(
+			baud_delay	:	INTEGER := 100
+		);
 		port(
 			clk			: in  STD_LOGIC;
 			input		: in  STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
@@ -19,6 +22,9 @@ package uart is
 	end component;
 	
 	component UART_RX is
+		generic(
+			baud_delay	:	INTEGER := 100
+		);
 		port(
 			clk			: in  STD_LOGIC;
 			RX			: in  STD_LOGIC;

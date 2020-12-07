@@ -3,6 +3,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity UART_TX is
+	generic(
+		baud_delay	:	INTEGER := 100
+	);
 	port(
 		clk			: in  STD_LOGIC;
 		input		: in  STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
@@ -36,7 +39,7 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if (timer < 1000) then
+			if (timer < baud_delay) then
 				timer <= timer + 1;
 				elapsed <= '0';
 			else

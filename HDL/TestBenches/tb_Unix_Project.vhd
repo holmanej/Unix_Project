@@ -10,6 +10,8 @@ end tb_Unix_Project;
 architecture Behavioral of tb_Unix_Project is
 
 	constant	sixnine	:	STD_LOGIC_VECTOR (7 downto 0) := x"69";
+	constant	ff		:	STD_LOGIC_VECTOR (7 downto 0) := x"ff";
+	constant	zero	:	STD_LOGIC_VECTOR (7 downto 0) := x"00";
 	
 	signal	clk			:	STD_LOGIC := '0';
 	signal	switches	:	STD_LOGIC_VECTOR (7 downto 0) := x"55";
@@ -21,10 +23,18 @@ begin
 	begin
 		wait for 5 ns;
 		rx <= '0';
-		wait for 10 us;
+		wait for 1 us;
 		for i in 0 to 7 loop
 			rx <= sixnine(i);
-			wait for 10 us;
+			wait for 1 us;
+		end loop;
+		rx <= '1';
+		wait for 1 us;
+		rx <= '0';
+		wait for 1 us;
+		for i in 0 to 7 loop
+			rx <= zero(i);
+			wait for 1 us;
 		end loop;
 		rx <= '1';
 		
