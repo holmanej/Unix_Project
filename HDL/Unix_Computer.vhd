@@ -32,11 +32,13 @@ architecture Behavioral of Unix_Computer is
 	signal		oFlag_resets	:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_clr			is	oFlag_resets(2);
 		alias	ram_clr			is	oFlag_resets(3);
+		alias	guest_clr		is	oFlag_resets(4);
 	signal		iFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	rx_done			is	iFlags(1);
 	signal		oFlags			:	STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		alias	tx_flag			is	oFlags(2);
 		alias	ram_flag		is	oFlags(3);
+		alias	guest_flag		is	oFlags(4);
 	signal		io_inputs		:	IO_ARRAY (0 to 15);
 		alias	sw_in			is	io_inputs(0);
 		alias	rx_output		is	io_inputs(1);
@@ -46,6 +48,11 @@ architecture Behavioral of Unix_Computer is
 		alias	led_out			is	io_outputs(0);		
 		alias	tx_input		is	io_outputs(2);
 		alias	ram_input		is	io_outputs(3);
+		alias	guest_input		is	io_outputs(4);
+		
+	-- Guest --
+	signal		guest_pc		:	STD_LOGIC_VECTOR (9 downto 0);
+	signal		guest_insn		:	STD_LOGIC_VECTOR (11 downto 0);
 	
 	-- UART --
 	signal		tx_done			:	STD_LOGIC;
@@ -60,8 +67,8 @@ begin
 	CPU: SRISC_CPU port map (
 		clk			=> clk,
 		reset		=> '0',
-		guest_insn	=> x"000",
-		guest_pc	=> open,
+		guest_insn	=> guest_insn,
+		guest_pc	=> guest_pc,
 		io_din		=> io_rdData,
 		io_dout		=> io_wrData,
 		io_addr		=> io_rwAddr,
@@ -83,6 +90,18 @@ begin
 		output_flags	=> oFlags,
 		inputs			=> io_inputs,
 		outputs			=> io_outputs
+	);
+	
+	Guest: Guest_ProgramMemory port map(
+		clk			=> clk,
+		reset		=> '0',
+		cpu_din		=> guest_input,
+		cpu_wren	=> io_wren,
+		wrFlag		=> guest_flag,
+		clrFlag		=> guest_clr,
+		-- --
+		guest_pc	=> guest_pc,
+		guest_insn	=> guest_insn
 	);
 	
 	RAM: GP_RAM port map(

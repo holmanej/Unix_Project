@@ -10,6 +10,8 @@ entity Guest_ProgramMemory is
 		reset		: in  STD_LOGIC;
 		cpu_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 		cpu_wren	: in  STD_LOGIC;
+		wrFlag		: in  STD_LOGIC;
+		clrFlag		: out STD_LOGIC;
 		guest_pc	: in  STD_LOGIC_VECTOR (9 downto 0);
 		guest_insn	: out STD_LOGIC_VECTOR (11 downto 0)
 	);
@@ -27,10 +29,13 @@ begin
 		clk			=> clk,
 		input		=> cpu_din,
 		cpu_wren	=> cpu_wren,
+		cpu_rden	=> '0',
+		wrFlag		=> wrFlag,
 		-- --
 		addrOut		=> wrAddr,
 		dataOut		=> wrData,
-		wrenOut		=> wren
+		wrenOut		=> wren,
+		clrFlag		=> clrFlag
 	);
 	
 	Memory: InsnRAM_12bit generic map(10) port map(
