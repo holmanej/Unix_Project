@@ -41,9 +41,9 @@ begin
 					mem_int(writeAddr)(11 downto 8) <= wrData(3 downto 0);
 				end if;
 			end if;
+			
+			rdData <= mem_int(to_integer(unsigned(rdAddr)));
 		end if;		
 	end process;
-	
-	rdData <= (others => '0') when (reset = '1') else mem_int(to_integer(unsigned(rdAddr)));
 
 end Behavioral;
