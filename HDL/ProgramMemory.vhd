@@ -4,7 +4,7 @@ use IEEE.NUMERIC_STD.ALL;
 library work;
 use work.unix_project.all;
 
-entity Guest_ProgramMemory is
+entity ProgramMemory is
 	port(
 		clk			: in  STD_LOGIC;
 		reset		: in  STD_LOGIC;
@@ -12,14 +12,15 @@ entity Guest_ProgramMemory is
 		cpu_wren	: in  STD_LOGIC;
 		wrFlag		: in  STD_LOGIC;
 		clrFlag		: out STD_LOGIC;
-		guest_pc	: in  STD_LOGIC_VECTOR (9 downto 0);
-		guest_insn	: out STD_LOGIC_VECTOR (11 downto 0)
+		prog_addr	: in  STD_LOGIC_VECTOR (9 downto 0);
+		instruction	: out STD_LOGIC_VECTOR (11 downto 0)
 	);
-end Guest_ProgramMemory;
+end ProgramMemory;
 	
-architecture Behavioral of Guest_ProgramMemory is
+architecture Behavioral of ProgramMemory is
 
 	signal		wrAddr		:	STD_LOGIC_VECTOR (10 downto 0) := (others => '0');
+	signal		ramAddr		:	STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
 	signal		wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		wren		:	STD_LOGIC := '0';
 
@@ -38,7 +39,9 @@ begin
 		clrFlag		=> clrFlag
 	);
 	
-	Memory: InsnRAM_12bit generic map(10) port map(
+	ramAddr <= '1' & wrAddr;
+	
+	Memory: InsnRAM_12bit generic map(11) port map(
 		clk			=> clk,
 		reset		=> reset,
 		-- --
@@ -46,8 +49,8 @@ begin
 		wrData		=> wrData,
 		wren		=> wren,
 		-- --
-		rdAddr		=> guest_pc,
-		rdData		=> guest_insn
+		rdAddr		=> prog_addr,
+		rdData		=> instruction
 	);		
 
 end Behavioral;

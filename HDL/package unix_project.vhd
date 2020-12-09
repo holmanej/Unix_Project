@@ -79,7 +79,7 @@ package unix_project is
 		);
 	end component;
 	
-	component Guest_ProgramMemory is
+	component ProgramMemory is
 		port(
 			clk			: in  STD_LOGIC;
 			reset		: in  STD_LOGIC;
@@ -87,8 +87,8 @@ package unix_project is
 			cpu_wren	: in  STD_LOGIC;
 			wrFlag		: in  STD_LOGIC;
 			clrFlag		: out STD_LOGIC;
-			guest_pc	: in  STD_LOGIC_VECTOR (9 downto 0);
-			guest_insn	: out STD_LOGIC_VECTOR (11 downto 0)
+			prog_addr	: in  STD_LOGIC_VECTOR (9 downto 0);
+			instruction	: out STD_LOGIC_VECTOR (11 downto 0)
 		);
 	end component;
 	

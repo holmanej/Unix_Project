@@ -9,9 +9,9 @@ entity ProgramModule is
 		clk			: in  STD_LOGIC;
 		reset		: in  STD_LOGIC;
 		cmp_in		: in  STD_LOGIC;
-		guest_insn	: in  STD_LOGIC_VECTOR (11 downto 0);
+		instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
 		-- --
-		guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
+		prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
 		inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
 		cmp_wren	: out STD_LOGIC;
 		data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
@@ -29,9 +29,7 @@ architecture Behavioral of ProgramModule is
 	
 	constant const_one		:	STD_LOGIC_VECTOR (9 downto 0) := (0 => '1', others => '0');
 	
-	signal	terminal_insn	:	STD_LOGIC_VECTOR (11 downto 0);
-	signal	insn_int		:	STD_LOGIC_VECTOR (11 downto 0);
-		alias	branchAddr	is	insn_int(9 downto 0);
+	alias	branchAddr	is	instruction(9 downto 0);
 		
 	signal	rdAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
 	signal	wrAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
@@ -47,7 +45,7 @@ architecture Behavioral of ProgramModule is
 begin
 
 	Decoder: ProgramDecoder port map (
-		inst_in		=> insn_int,
+		inst_in		=> instruction,
 		cmp_in		=> cmp_in,
 		src_sel		=> src_sel,
 		-- --
@@ -64,24 +62,12 @@ begin
 		exec_cmd	=> exec_cmd,
 		exit_cmd	=> exit_cmd
 	);
-		
-	InsnMux: Mux_2to1_nbit generic map(12) port map (
-		a_in	=> terminal_insn,
-		b_in	=> guest_insn,
-		sel		=> src_sel,
-		output	=> insn_int
-	);
 	
 	GuestEnable: SR_Latch port map (
 		clk		=> clk,
 		set		=> exec_cmd,
 		reset	=> exit_cmd,
 		output	=> src_sel
-	);
-	
-	Memory: ProgramMemory port map (
-		rdAddr	=> rdAddr,
-		rdData	=> terminal_insn
 	);
 
 	AddrRegister: Register_nbit generic map(10) port map (
@@ -99,7 +85,7 @@ begin
 		output	=> pc_branch
 	);
 	
-	ReturnReg: Register_nbit generic map(10) port map (
+	ROMReg: Register_nbit generic map(10) port map (
 		clk		=> clk,
 		rst		=> reset,
 		wrData	=> pc_addone,
@@ -120,7 +106,7 @@ begin
 		output	=> pc_addone
 	);
 	
-	guest_pc <= rdAddr;
-	inst_out <= insn_int(9 downto 0);
+	prog_addr <= rdAddr;
+	inst_out <= instruction(9 downto 0);
 
 end Behavioral;

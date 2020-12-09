@@ -90,14 +90,6 @@ package srisc is
 			rdData_b: out STD_LOGIC_VECTOR (7 downto 0)
 		);
 	end component;
-	
-	component ProgramMemory is
-		port(
-			rdAddr	: in  STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-			-- --
-			rdData	: out STD_LOGIC_VECTOR (11 downto 0)
-		);
-	end component;
 
 	-- Logic --
 	component ProgramDecoder is
@@ -138,9 +130,9 @@ package srisc is
 			clk			: in  STD_LOGIC;
 			reset		: in  STD_LOGIC;
 			cmp_in		: in  STD_LOGIC;
-			guest_insn	: in  STD_LOGIC_VECTOR (11 downto 0);
+			instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
 			-- --
-			guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
+			prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
 			inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
 			cmp_wren	: out STD_LOGIC;
 			data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
@@ -200,8 +192,8 @@ package srisc is
 		port(
 			clk			: in  STD_LOGIC;
 			reset		: in  STD_LOGIC;
-			guest_insn	: in  STD_LOGIC_VECTOR (11 downto 0);
-			guest_pc	: out STD_LOGIC_VECTOR (9 downto 0);
+			instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
+			prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
 			io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 			io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 			io_addr		: out STD_LOGIC_VECTOR (3 downto 0);

@@ -20,6 +20,10 @@ end Unix_Computer;
 	
 architecture Behavioral of Unix_Computer is
 
+	-- Program --
+	signal		instruction		:	STD_LOGIC_VECTOR (11 downto 0);
+	signal		prog_addr		:	STD_LOGIC_VECTOR (9 downto 0);
+
 	-- IO --	
 	signal		io_wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		io_rdData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
@@ -50,10 +54,6 @@ architecture Behavioral of Unix_Computer is
 		alias	ram_input		is	io_outputs(3);
 		alias	guest_input		is	io_outputs(4);
 		
-	-- Guest --
-	signal		guest_pc		:	STD_LOGIC_VECTOR (9 downto 0);
-	signal		guest_insn		:	STD_LOGIC_VECTOR (11 downto 0);
-	
 	-- UART --
 	signal		tx_done			:	STD_LOGIC;
 
@@ -67,8 +67,8 @@ begin
 	CPU: SRISC_CPU port map (
 		clk			=> clk,
 		reset		=> '0',
-		guest_insn	=> guest_insn,
-		guest_pc	=> guest_pc,
+		instruction	=> instruction,
+		prog_addr	=> prog_addr,
 		io_din		=> io_rdData,
 		io_dout		=> io_wrData,
 		io_addr		=> io_rwAddr,
@@ -92,7 +92,7 @@ begin
 		outputs			=> io_outputs
 	);
 	
-	Guest: Guest_ProgramMemory port map(
+	Program: ProgramMemory port map(
 		clk			=> clk,
 		reset		=> '0',
 		cpu_din		=> guest_input,
@@ -100,8 +100,8 @@ begin
 		wrFlag		=> guest_flag,
 		clrFlag		=> guest_clr,
 		-- --
-		guest_pc	=> guest_pc,
-		guest_insn	=> guest_insn
+		prog_addr	=> prog_addr,
+		instruction	=> instruction
 	);
 	
 	RAM: GP_RAM port map(
