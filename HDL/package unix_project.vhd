@@ -87,7 +87,7 @@ package unix_project is
 			cpu_wren	: in  STD_LOGIC;
 			wrFlag		: in  STD_LOGIC;
 			clrFlag		: out STD_LOGIC;
-			prog_addr	: in  STD_LOGIC_VECTOR (9 downto 0);
+			prog_addr	: in  STD_LOGIC_VECTOR (10 downto 0);
 			instruction	: out STD_LOGIC_VECTOR (11 downto 0)
 		);
 	end component;

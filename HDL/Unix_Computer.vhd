@@ -22,7 +22,7 @@ architecture Behavioral of Unix_Computer is
 
 	-- Program --
 	signal		instruction		:	STD_LOGIC_VECTOR (11 downto 0);
-	signal		prog_addr		:	STD_LOGIC_VECTOR (9 downto 0);
+	signal		prog_addr		:	STD_LOGIC_VECTOR (10 downto 0);
 
 	-- IO --	
 	signal		io_wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');

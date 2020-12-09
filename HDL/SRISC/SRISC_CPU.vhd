@@ -9,7 +9,7 @@ entity SRISC_CPU is
 		clk			: in  STD_LOGIC;
 		reset		: in  STD_LOGIC;
 		instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
-		prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
+		prog_addr	: out STD_LOGIC_VECTOR (10 downto 0);
 		io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 		io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 		io_addr		: out STD_LOGIC_VECTOR (3 downto 0);

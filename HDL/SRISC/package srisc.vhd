@@ -11,7 +11,7 @@ package srisc is
 
 	-- TYPES --
 	type	IO_ARRAY	is	ARRAY (integer range<>) of STD_LOGIC_VECTOR (7 downto 0);
-	type	INST_TYPE	is	ARRAY (0 to 1023) of STD_LOGIC_VECTOR (11 downto 0);
+	type	INST_TYPE	is	ARRAY (0 to 2047) of STD_LOGIC_VECTOR (11 downto 0);
 	type	MEM_TYPE	is	ARRAY (0 to 127) of STD_LOGIC_VECTOR (7 downto 0);
 	
 	-- 	COMPONENTS --
@@ -132,7 +132,7 @@ package srisc is
 			cmp_in		: in  STD_LOGIC;
 			instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
 			-- --
-			prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
+			prog_addr	: out STD_LOGIC_VECTOR (10 downto 0);
 			inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
 			cmp_wren	: out STD_LOGIC;
 			data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
@@ -193,7 +193,7 @@ package srisc is
 			clk			: in  STD_LOGIC;
 			reset		: in  STD_LOGIC;
 			instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
-			prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
+			prog_addr	: out STD_LOGIC_VECTOR (10 downto 0);
 			io_din		: in  STD_LOGIC_VECTOR (7 downto 0);
 			io_dout		: out STD_LOGIC_VECTOR (7 downto 0);
 			io_addr		: out STD_LOGIC_VECTOR (3 downto 0);
@@ -215,7 +215,7 @@ package body srisc is
 		variable ram_data:   INST_TYPE;
 		variable input_line: line;
 	begin
-		for i in 0 to 1023 loop
+		for i in 0 to 2047 loop
 			if not endfile(in_file) then
 				readline(in_file, input_line);
 				read(input_line, ram_data(i));

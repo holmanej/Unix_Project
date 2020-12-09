@@ -11,7 +11,7 @@ entity ProgramModule is
 		cmp_in		: in  STD_LOGIC;
 		instruction	: in  STD_LOGIC_VECTOR (11 downto 0);
 		-- --
-		prog_addr	: out STD_LOGIC_VECTOR (9 downto 0);
+		prog_addr	: out STD_LOGIC_VECTOR (10 downto 0);
 		inst_out	: out STD_LOGIC_VECTOR (9 downto 0);
 		cmp_wren	: out STD_LOGIC;
 		data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
@@ -106,7 +106,7 @@ begin
 		output	=> pc_addone
 	);
 	
-	prog_addr <= rdAddr;
+	prog_addr <= src_sel & rdAddr;
 	inst_out <= instruction(9 downto 0);
 
 end Behavioral;
