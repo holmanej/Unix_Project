@@ -34,18 +34,6 @@ package srisc is
 			rdData	: out STD_LOGIC_VECTOR (w-1 downto 0) := (others => '0')
 		);
 	end component;
-
-	-- Logic --	
-	component ALULogic is
-		port(
-			a_in	: in  STD_LOGIC_VECTOR (7 downto 0);
-			b_in	: in  STD_LOGIC_VECTOR (7 downto 0);
-			sel		: in  STD_LOGIC_VECTOR (3 downto 0);
-			-- --
-			output	: out STD_LOGIC_VECTOR (7 downto 0);
-			cmp_out	: out STD_LOGIC
-		);
-	end component;
 	
 	-- Modules --
 	component ProgramModule is

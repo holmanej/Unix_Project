@@ -1,8 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
-library work;
-use work.srisc.ALL;
 
 entity ALUModule is
 	port(
@@ -19,24 +17,58 @@ end ALUModule;
 	
 architecture Behavioral of ALUModule is
 
-	signal	cmp_int		:	STD_LOGIC_VECTOR (0 downto 0);
+	
+
+	signal		aData		:	UNSIGNED (8 downto 0);
+	signal		bData		:	UNSIGNED (8 downto 0);
+	signal		result		:	UNSIGNED (8 downto 0);
+	signal 		cmp			:	STD_LOGIC;
 
 begin
 
-	ALU: ALULogic port map (
-		a_in	=> regData_a,
-		b_in	=> regData_b,
-		sel		=> alu_sel,
-		output	=> alu_out,
-		cmp_out	=> cmp_int(0)
-	);
+	aData <= unsigned('0' & regData_a);
+	bData <= unsigned('0' & regData_b);
+
+	process(aData, bData, alu_sel, result)
+	begin
+		case alu_sel is
+			when x"0" => result <= aData + bData;
+			when x"1" => result <= aData - bData;
+			when x"2" => result <= aData and bData;
+			when x"3" => result <= aData or bData;
+			when x"4" => result <= aData xor bData;
+			when x"5" => result <= not aData;
+			when x"6" => result <= aData sll to_integer(bData);
+			when x"7" => result <= aData srl to_integer(bData);
+			when x"8" => result <= aData + 1;
+			when x"9" => result <= aData - 1;			
+			when others => result <= aData;
+		end case;
+		
+		case alu_sel is
+			when x"0" => cmp <= result(8);
+			when x"1" => cmp <= result(8);
+			when x"8" => cmp <= result(8);
+			when x"9" => cmp <= result(8);
+			when x"B" => cmp <= '1' when (aData < bData) else '0';
+			when x"C" => cmp <= '1' when (signed(aData(7 downto 0)) < signed(bData(7 downto 0))) else '0';
+			when x"D" => cmp <= '1' when (aData = bData) else '0';
+			when x"E" => cmp <= '1' when (aData = 0) else '0';
+			when x"F" => cmp <= '1';
+			when others => cmp <= '0';
+		end case;
+			
+	end process;
 	
-	Compare: Register_nbit generic map(1) port map (
-		clk			=> clk,
-		rst			=> '0',
-		wrData		=> cmp_int,
-		wrEn		=> cmp_wrEn,
-		rdData(0)	=> cmp_out
-	);
+	process(clk)
+	begin
+		if (rising_edge(clk)) then
+			if (cmp_wren = '1') then
+				cmp_out <= cmp;
+			end if;
+		end if;
+	end process;
+	
+	alu_out <= std_logic_vector(result(7 downto 0));
 
 end Behavioral;
