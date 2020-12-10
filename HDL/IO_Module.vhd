@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 library work;
-use work.srisc.all;
+use work.unix_project.all;
 
 entity IO_Module is
 	port(
@@ -17,8 +17,8 @@ entity IO_Module is
 		output_resets	: in  STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		input_flags		: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
 		output_flags	: out STD_LOGIC_VECTOR (15 downto 0) := (others => '0');
-		inputs			: in  IO_ARRAY (0 to 15) := (others => (others => '0'));
-		outputs			: out IO_ARRAY (0 to 15) := (others => (others => '0'))
+		inputs			: in  BIT8_ARRAY (0 to 15) := (others => (others => '0'));
+		outputs			: out BIT8_ARRAY (0 to 15) := (others => (others => '0'))
 	);
 end IO_Module;
 	

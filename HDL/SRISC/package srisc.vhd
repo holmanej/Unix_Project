@@ -1,18 +1,12 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
-use std.textio.all;
 library work;
 ----------------------------------------------------------------------------
 package srisc is
 
-	-- CONSTANTS --
-	constant	NOP		:	STD_LOGIC_VECTOR (11 downto 0) := x"402";
-
 	-- TYPES --
-	type	IO_ARRAY	is	ARRAY (integer range<>) of STD_LOGIC_VECTOR (7 downto 0);
-	type	INST_TYPE	is	ARRAY (0 to 2047) of STD_LOGIC_VECTOR (11 downto 0);
-	type	MEM_TYPE	is	ARRAY (0 to 127) of STD_LOGIC_VECTOR (7 downto 0);
+	type	BIT8_ARRAY	is	ARRAY (integer range<>) of STD_LOGIC_VECTOR (7 downto 0);
 	
 	-- 	COMPONENTS --
 	component Mux_2to1_nbit is
@@ -28,30 +22,6 @@ package srisc is
 		);
 	end component;
 	
-	component Mux_4to1_nbit is
-		generic(
-			w		: INTEGER := 8
-		);
-		port(
-			in_1	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			in_2	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			in_3	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			in_4	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			sel		: in  STD_LOGIC_VECTOR (1 downto 0);
-			-- --
-			output	: out STD_LOGIC_VECTOR (w-1 downto 0)
-		);
-	end component;
-	
-	component SR_Latch is
-		port(
-			clk		: in  STD_LOGIC;
-			set		: in  STD_LOGIC;
-			reset	: in  STD_LOGIC;
-			output	: out STD_LOGIC
-		);
-	end component;
-	
 	component Register_nbit is
 		generic(
 			w		: INTEGER := 4
@@ -64,55 +34,8 @@ package srisc is
 			rdData	: out STD_LOGIC_VECTOR (w-1 downto 0) := (others => '0')
 		);
 	end component;
-	
-	component UnsignedAdder_nbit is
-		generic(
-			w		: INTEGER := 4
-		);
-		port(
-			a_in	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			b_in	: in  STD_LOGIC_VECTOR (w-1 downto 0);
-			output	: out STD_LOGIC_VECTOR (w-1 downto 0)
-		);
-	end component;
 
-	-- Memory --
-	component RegisterMemory is
-		port(
-			clk		: in  STD_LOGIC;
-			wrAddr	: in  STD_LOGIC_VECTOR (1 downto 0);
-			wrData	: in  STD_LOGIC_VECTOR (7 downto 0);
-			wren	: in  STD_LOGIC;
-			rdAddr_a: in  STD_LOGIC_VECTOR (1 downto 0);
-			rdAddr_b: in  STD_LOGIC_VECTOR (1 downto 0);
-			-- --
-			rdData_a: out STD_LOGIC_VECTOR (7 downto 0);
-			rdData_b: out STD_LOGIC_VECTOR (7 downto 0)
-		);
-	end component;
-
-	-- Logic --
-	component ProgramDecoder is
-		port(
-			inst_in		: in  STD_LOGIC_VECTOR (11 downto 0);
-			cmp_in		: in  STD_LOGIC;
-			src_sel		: in  STD_LOGIC;
-			-- --
-			prog_sel	: out STD_LOGIC;
-			cmp_wren	: out STD_LOGIC;
-			data_sel	: out STD_LOGIC_VECTOR (1 downto 0);
-			reg_addr_sel: out STD_LOGIC;
-			reg_wren	: out STD_LOGIC;
-			mem_addr_sel: out STD_LOGIC;
-			mem_wren	: out STD_LOGIC;
-			ind_wren	: out STD_LOGIC;
-			io_wren		: out STD_LOGIC;
-			io_rden		: out STD_LOGIC;
-			exec_cmd	: out STD_LOGIC;
-			exit_cmd	: out STD_LOGIC
-		);
-	end component;
-	
+	-- Logic --	
 	component ALULogic is
 		port(
 			a_in	: in  STD_LOGIC_VECTOR (7 downto 0);
@@ -201,31 +124,5 @@ package srisc is
 			io_rden		: out STD_LOGIC
 		);
 	end component;
-	
-	-- FUNCTIONS --
-	impure function READ_BIN_FILE(the_file_name: in string) return INST_TYPE;
-	
-end srisc;
-
-package body srisc is
-
-	-- FUNCTIONS --	
-	impure function READ_BIN_FILE(the_file_name: in string) return INST_TYPE is		
-		file     in_file:    text open read_mode is the_file_name;
-		variable ram_data:   INST_TYPE;
-		variable input_line: line;
-	begin
-		for i in 0 to 2047 loop
-			if not endfile(in_file) then
-				readline(in_file, input_line);
-				read(input_line, ram_data(i));
-			else
-				ram_data(i) := NOP;
-			end if;
-		end loop;
-		
-		file_close(in_file);
-		return ram_data;
-	end function;
 	
 end srisc;

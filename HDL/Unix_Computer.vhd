@@ -1,9 +1,8 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.NUMERIC_STD.all;
 library work;
-use work.srisc.all;
-use work.unix_project.ALL;
+use work.unix_project.all;
 use work.uart.all;
 
 entity Unix_Computer is
@@ -43,12 +42,12 @@ architecture Behavioral of Unix_Computer is
 		alias	tx_flag			is	oFlags(2);
 		alias	ram_flag		is	oFlags(3);
 		alias	guest_flag		is	oFlags(4);
-	signal		io_inputs		:	IO_ARRAY (0 to 15);
+	signal		io_inputs		:	BIT8_ARRAY (0 to 15);
 		alias	sw_in			is	io_inputs(0);
 		alias	rx_output		is	io_inputs(1);
 		alias	uart_status		is	io_inputs(2);
 		alias	ram_output		is	io_inputs(3);
-	signal		io_outputs		:	IO_ARRAY (0 to 15);
+	signal		io_outputs		:	BIT8_ARRAY (0 to 15);
 		alias	led_out			is	io_outputs(0);		
 		alias	tx_input		is	io_outputs(2);
 		alias	ram_input		is	io_outputs(3);

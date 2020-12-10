@@ -18,9 +18,7 @@ end MemoryModule;
 	
 architecture Behavioral of MemoryModule is	
 	
-	signal		mem_int		:	MEM_TYPE := (others => (others => '0'));
-	attribute	ramstyle	:	string;
-	attribute	ramstyle of mem_int	:	signal is "block";
+	signal		mem_int		:	BIT8_ARRAY (0 to 127) := (others => (others => '0'));
 
 begin
 

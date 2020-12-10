@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 library work;
-use work.srisc.all;
+use work.unix_project.all;
 
 entity InsnRAM_12bit is
 	generic(
@@ -23,7 +23,7 @@ end InsnRAM_12bit;
 	
 architecture Behavioral of InsnRAM_12bit is
 	
-	signal		mem_int		:	INST_TYPE := READ_BIN_FILE("C:\Users\holma\source\repos\Unix_Project\S Code\guest_wr.bin");
+	signal		mem_int		:	BIT12_ARRAY := READ_BIN_FILE("C:\Users\holma\source\repos\Unix_Project\S Code\guest_wr.bin");
 	
 	signal		writeAddr	:	INTEGER := 0;
 	

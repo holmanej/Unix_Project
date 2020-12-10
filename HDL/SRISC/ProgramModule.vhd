@@ -27,86 +27,80 @@ end ProgramModule;
 	
 architecture Behavioral of ProgramModule is
 	
-	constant const_one		:	STD_LOGIC_VECTOR (9 downto 0) := (0 => '1', others => '0');
+	constant	jmp_3ff	:	STD_LOGIC_VECTOR (11 downto 0) := (others => '1');
+
+	alias	opcode		is	instruction(11 downto 10);
+	alias	branch_addr	is	instruction(9 downto 0);
+	alias	rw_sel		is	instruction(7);
+	alias	addrHigh	is	instruction(6 downto 4);
+	alias	mem_addr	is	instruction(6 downto 0);
+	alias	alu_op		is	instruction(3 downto 0);	
 	
-	alias	branchAddr	is	instruction(9 downto 0);
-		
-	signal	rdAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	signal	wrAddr			:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	signal	pc_addone		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	signal	pc_branch		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	signal	returnAddr		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
-	
-	signal	nextAddr_sel	:	STD_LOGIC := '0';
+	signal	branch_en		:	STD_LOGIC := '0';
 	signal	src_sel			:	STD_LOGIC := '0';
 	signal	exec_cmd		:	STD_LOGIC := '0';
 	signal	exit_cmd		:	STD_LOGIC := '0';
+	
+	signal	rom_addr		:	UNSIGNED (9 downto 0) := (others => '0');
+	signal	guest_addr		:	UNSIGNED (9 downto 0) := (others => '0');
+	
 
-begin
+begin	
 
-	Decoder: ProgramDecoder port map (
-		inst_in		=> instruction,
-		cmp_in		=> cmp_in,
-		src_sel		=> src_sel,
-		-- --
-		prog_sel	=> nextAddr_sel,
-		cmp_wren	=> cmp_wren,
-		data_sel	=> data_sel,
-		reg_addr_sel=> reg_addr_sel,
-		reg_wren	=> reg_wren,
-		mem_addr_sel=> mem_addr_sel,
-		mem_wren	=> mem_wren,
-		ind_wren	=> ind_wren,
-		io_wren		=> io_wren,
-		io_rden		=> io_rden,
-		exec_cmd	=> exec_cmd,
-		exit_cmd	=> exit_cmd
-	);
+	branch_en	<= '1' when (opcode = "11" and cmp_in = '1') or (instruction = jmp_3ff and src_sel = '1') else '0';
+	cmp_wren	<= '1' when (opcode = "01") else '0';
+	data_sel	<= "11" when (opcode = "10" and addrHigh = "111") else opcode;
+	reg_addr_sel<= '1' when (opcode = "10") else '0';
+	reg_wren	<= '1' when (opcode = "00" or (opcode = "01" and unsigned(alu_op) <= 9) or (opcode = "10" and rw_sel = '0')) else '0';
+	mem_addr_sel<= '1' when (mem_addr = "0000000") else '0';
+	mem_wren	<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh /= "111") else '0';
+	ind_wren	<= '1' when (opcode = "01" and alu_op = x"A") else '0';
+	io_wren		<= '1' when (opcode = "10" and rw_sel = '1' and addrHigh = "111") else '0';
+	io_rden		<= '1' when (opcode = "10" and rw_sel = '0' and addrHigh = "111") else '0';
+	exec_cmd	<= '1' when (instruction = jmp_3ff and src_sel = '0') else '0';
+	exit_cmd	<= '1' when (instruction = jmp_3ff and src_sel = '1') else '0';
 	
-	GuestEnable: SR_Latch port map (
-		clk		=> clk,
-		set		=> exec_cmd,
-		reset	=> exit_cmd,
-		output	=> src_sel
-	);
-
-	AddrRegister: Register_nbit generic map(10) port map (
-		clk		=> clk,
-		rst		=> exec_cmd,
-		wrData	=> wrAddr,
-		wren	=> '1',
-		rdData	=> rdAddr
-	);
+	process(clk)
+	begin
+		if (rising_edge(clk)) then
+			if (exit_cmd = '1') then
+				src_sel <= '0';
+			elsif (exec_cmd = '1') then
+				src_sel <= '1';
+			end if;
+			
+			if (src_sel = '0') then
+				if (branch_en = '1') then
+					rom_addr <= unsigned(branch_addr);
+				else
+					rom_addr <= rom_addr + 1;
+				end if;
+			else
+				if (exec_cmd <= '1') then
+					guest_addr <= (others => '0');
+				elsif (branch_en = '1') then
+					guest_addr <= unsigned(branch_addr);
+				else
+					guest_addr <= guest_addr + 1;
+				end if;
+			end if;
+			
+		end if;
+	end process;
 	
-	BranchMux: Mux_2to1_nbit generic map(10) port map (
-		a_in	=> branchAddr,
-		b_in	=> returnAddr,
-		sel		=> exit_cmd,
-		output	=> pc_branch
-	);
+	process(src_sel, branch_en, rom_addr, guest_addr)
+	begin
+		if (branch_en = '1') then
+			prog_addr <= src_sel & branch_addr;
+		else
+			if (src_sel = '1') then
+				prog_addr <= '1' & std_logic_vector(guest_addr);
+			else
+				prog_addr <= '0' & std_logic_vector(rom_addr);
+			end if;
+		end if;
+	end process;
 	
-	ROMReg: Register_nbit generic map(10) port map (
-		clk		=> clk,
-		rst		=> reset,
-		wrData	=> pc_addone,
-		wren	=> exec_cmd,
-		rdData	=> returnAddr
-	);
-	
-	AddrMux: Mux_2to1_nbit generic map(10) port map (
-		a_in	=> pc_addone,
-		b_in	=> pc_branch,
-		sel		=> nextAddr_sel,
-		output	=> wrAddr
-	);
-	
-	AddrAdder: UnsignedAdder_nbit generic map(10) port map (
-		a_in	=> rdAddr,
-		b_in	=> const_one,
-		output	=> pc_addone
-	);
-	
-	prog_addr <= src_sel & rdAddr;
 	inst_out <= instruction(9 downto 0);
 
 end Behavioral;
