@@ -23,7 +23,7 @@ end InsnRAM_12bit;
 	
 architecture Behavioral of InsnRAM_12bit is
 	
-	signal		mem_int		:	BIT12_ARRAY := READ_BIN_FILE("C:\Users\holma\source\repos\Unix_Project\S Code\guest_wr.bin");
+	signal		mem_int		:	BIT12_ARRAY := READ_BIN_FILE("C:\Users\holma\source\repos\Unix_Project\S_Code\uart_guest_loader.bin");
 	
 	signal		writeAddr	:	INTEGER := 0;
 	

@@ -76,7 +76,7 @@ begin
 					rom_addr <= rom_addr + 1;
 				end if;
 			else
-				if (exec_cmd <= '1') then
+				if (exec_cmd = '1') then
 					guest_addr <= (others => '0');
 				elsif (branch_en = '1') then
 					guest_addr <= unsigned(branch_addr);
