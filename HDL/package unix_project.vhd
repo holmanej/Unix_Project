@@ -139,14 +139,15 @@ package unix_project is
 	end component;
 	
 	-- FUNCTIONS --
-	impure function READ_BIN_FILE(the_file_name: in string) return BIT12_ARRAY;
+	impure function READ_ROM_FILE(the_file_name: in string) return BIT12_ARRAY;
+	impure function READ_GUEST_FILE(the_file_name: in string) return BIT8_ARRAY;
 	
 end unix_project;
 
 package body unix_project is
 
 	-- FUNCTIONS --	
-	impure function READ_BIN_FILE(the_file_name: in string) return BIT12_ARRAY is		
+	impure function READ_ROM_FILE(the_file_name: in string) return BIT12_ARRAY is		
 		file     in_file:    text open read_mode is the_file_name;
 		variable ram_data:   BIT12_ARRAY;
 		variable input_line: line;
@@ -157,6 +158,24 @@ package body unix_project is
 				read(input_line, ram_data(i));
 			else
 				ram_data(i) := NOP;
+			end if;
+		end loop;
+		
+		file_close(in_file);
+		return ram_data;
+	end function;
+	
+	impure function READ_GUEST_FILE(the_file_name: in string) return BIT8_ARRAY is		
+		file     in_file:    text open read_mode is the_file_name;
+		variable ram_data:   BIT8_ARRAY (0 to 2047);
+		variable input_line: line;
+	begin
+		for i in 0 to 2047 loop
+			if not endfile(in_file) then
+				readline(in_file, input_line);
+				read(input_line, ram_data(i));
+			else
+				ram_data(i) := x"00";
 			end if;
 		end loop;
 		

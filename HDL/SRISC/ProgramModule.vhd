@@ -47,7 +47,7 @@ architecture Behavioral of ProgramModule is
 
 begin	
 
-	branch_en	<= '1' when (opcode = "11" and cmp_in = '1') or (instruction = jmp_3ff and src_sel = '1') else '0';
+	branch_en	<= '1' when (opcode = "11" and cmp_in = '1') else '0';
 	cmp_wren	<= '1' when (opcode = "01") else '0';
 	data_sel	<= "11" when (opcode = "10" and addrHigh = "111") else opcode;
 	reg_addr_sel<= '1' when (opcode = "10") else '0';
@@ -70,8 +70,9 @@ begin
 			end if;
 			
 			if (src_sel = '0') then
-				if (branch_en = '1') then
-					rom_addr <= unsigned(branch_addr);
+				if (exec_cmd = '1') then
+				elsif (branch_en = '1') then
+					rom_addr <= unsigned(branch_addr) + 1;
 				else
 					rom_addr <= rom_addr + 1;
 				end if;
@@ -79,7 +80,7 @@ begin
 				if (exec_cmd = '1') then
 					guest_addr <= (others => '0');
 				elsif (branch_en = '1') then
-					guest_addr <= unsigned(branch_addr);
+					guest_addr <= unsigned(branch_addr) + 1;
 				else
 					guest_addr <= guest_addr + 1;
 				end if;

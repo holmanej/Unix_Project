@@ -48,7 +48,7 @@ architecture Behavioral of Unix_Computer is
 		alias	uart_status		is	io_inputs(2);
 		alias	ram_output		is	io_inputs(3);
 	signal		io_outputs		:	BIT8_ARRAY (0 to 15);
-		alias	led_out			is	io_outputs(0);		
+		alias	led_out			is	io_outputs(0);
 		alias	tx_input		is	io_outputs(2);
 		alias	ram_input		is	io_outputs(3);
 		alias	guest_input		is	io_outputs(4);
@@ -59,6 +59,7 @@ architecture Behavioral of Unix_Computer is
 begin
 
 	sw_in <= switches;
+	--leds <= prog_addr(10) & prog_addr(6 downto 0);
 	leds <= led_out;
 	
 	uart_status <= (2 => tx_done, 1 => rx_done, others => '0');
