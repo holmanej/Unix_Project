@@ -1,0 +1,11 @@
+Local Memory Convention:
+Total Range=128 words
+
+Categories:
+Indirect: 0
+Kernal: 1..15 (K1..15)
+Arguments: 16..31 (A1..16)
+Return values: 32..47 (T1..16)
+ROM: 48..79 (S1..32)
+Guest: 80..111 (G1..32)
+Devices: 112..127 (D1..15)

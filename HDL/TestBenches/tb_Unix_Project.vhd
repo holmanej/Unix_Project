@@ -15,7 +15,13 @@ architecture Behavioral of tb_Unix_Project is
 	constant	eighto	:	STD_LOGIC_VECTOR (7 downto 0) := x"80";
 	
 	constant	helloW	:	BIT8_ARRAY (0 to 2047) := READ_GUEST_FILE("C:\Users\holma\source\repos\Unix_Project\S_Code\hello_world.bin");
-
+	constant	lmao	:	BIT8_ARRAY (0 to 4) := (
+		x"4C",
+		x"6D",
+		x"61",
+		x"6F",
+		x"0D"
+	);
 	
 	signal	clk			:	STD_LOGIC := '0';
 	signal	switches	:	STD_LOGIC_VECTOR (7 downto 0) := x"55";
@@ -27,18 +33,18 @@ begin
 	begin
 		wait for 5 ns;
 		
-		for i in 0 to 2047 loop
+		for i in 0 to 4 loop
 			rx <= '0';
 			wait for 1 us;
 			for j in 0 to 7 loop
-				rx <= helloW(i)(j);
+				rx <= lmao(i)(j);
 				wait for 1 us;
 			end loop;
 			rx <= '1';
 			wait for 1 us;
 		end loop;
 		
-		wait;
+		wait for 300 us;
 	end process;
 
 	process
