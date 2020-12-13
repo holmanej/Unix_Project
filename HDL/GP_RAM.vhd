@@ -22,6 +22,8 @@ architecture Behavioral of GP_RAM is
 	signal		rwAddr		:	STD_LOGIC_VECTOR (9 downto 0) := (others => '0');
 	signal		wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		wren		:	STD_LOGIC := '0';
+	
+	signal		mem_int		:	BIT8_ARRAY (0 to 1023) := READ_GUEST_FILE("C:\Users\holma\source\repos\Unix_Project\S_Code\S_ROM.bin", 1024);
 
 begin
 
@@ -37,17 +39,16 @@ begin
 		wrenOut		=> wren,
 		clrFlag		=> clrFlag
 	);
-	
-	Memory: SPRAM_MxN generic map(10, 8) port map(
-		clk			=> clk,
-		reset		=> reset,
-		-- --
-		wrAddr		=> rwAddr,
-		wrData		=> wrData,
-		wren		=> wren,
-		-- --
-		rdAddr		=> rwAddr,
-		rdData		=> cpu_dout
-	);		
+
+	process(clk)
+	begin
+		if (rising_edge(clk)) then
+			if (wren = '1') then
+				mem_int(to_integer(unsigned(rwAddr))) <= wrData;
+			end if;
+			
+			cpu_dout <= mem_int(to_integer(unsigned(rwAddr)));
+		end if;
+	end process;
 
 end Behavioral;
