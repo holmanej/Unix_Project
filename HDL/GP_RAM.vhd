@@ -23,7 +23,7 @@ architecture Behavioral of GP_RAM is
 	signal		wrData		:	STD_LOGIC_VECTOR (7 downto 0) := (others => '0');
 	signal		wren		:	STD_LOGIC := '0';
 	
-	signal		mem_int		:	BIT8_ARRAY (0 to 1023) := READ_GUEST_FILE("C:\Users\holma\source\repos\Unix_Project\S_Code\S_ROM.bin", 1024);
+	signal		mem_int		:	BIT8_ARRAY (0 to 1023) := READ_GUEST_FILE("C:\Users\holma\source\repos\Unix_Project\S_Code\cmd_parser.bin", 1024);
 
 begin
 
